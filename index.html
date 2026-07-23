@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WUTONG — Developer & Creator</title>
+  <meta name="description" content="个人主页 — 开发者、创作者">
+  <style>
+    /* ============ RESET & BASE ============ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-tertiary: #ebebeb;
+      --text: #1a1a1a;
+      --text-secondary: #555;
+      --text-tertiary: #999;
+      --border: #e0e0e0;
+      --accent: #1a1a1a;
+      --accent-hover: #333;
+      --shadow: 0 2px 20px rgba(0,0,0,0.06);
+      --shadow-hover: 0 8px 40px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --max-width: 960px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0d0d0d;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #242424;
+      --text: #f0f0f0;
+      --text-secondary: #aaa;
+      --text-tertiary: #666;
+      --border: #2a2a2a;
+      --accent: #f0f0f0;
+      --accent-hover: #ddd;
+      --shadow: 0 2px 20px rgba(0,0,0,0.3);
+      --shadow-hover: 0 8px 40px rgba(0,0,0,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; transition: color var(--transition); }
+    a:hover { color: var(--text-tertiary); }
+
+    /* ============ NAV ============ */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    [data-theme="dark"] nav {
+      background: rgba(13,13,13,0.85);
+    }
+
+    .nav-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--text);
+      transition: all var(--transition);
+    }
+
+    .theme-toggle:hover { border-color: var(--text); }
+
+    .menu-btn { display: none; }
+
+    /* ============ HERO ============ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 40px;
+      position: relative;
+    }
+
+    .hero-content { max-width: 640px; }
+
+    .hero-greeting {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 8vw, 64px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 .wave { display: inline-block; animation: wave 2.5s ease-in-out infinite; transform-origin: 70% 70%; }
+
+    @keyframes wave {
+      0%, 60%, 100% { transform: rotate(0deg); }
+      10% { transform: rotate(14deg); }
+      20% { transform: rotate(-8deg); }
+      30% { transform: rotate(14deg); }
+      40% { transform: rotate(-4deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    .hero-subtitle {
+      font-size: clamp(16px, 3vw, 20px);
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .hero-subtitle .highlight {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-outline {
+      border-color: var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--text);
+      transform: translateY(-2px);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: var(--text-tertiary);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ============ SECTIONS ============ */
+    section {
+      padding: 100px 24px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 5vw, 36px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 48px;
+    }
+
+    /* ============ ABOUT ============ */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .about-text p strong { color: var(--text); }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* ============ SKILLS ============ */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .skill-tag {
+      padding: 8px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      cursor: default;
+    }
+
+    .skill-tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* ============ PROJECTS ============ */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .project-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .project-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+    }
+
+    .project-thumb {
+      width: 100%;
+      height: 180px;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0.08));
+      transition: opacity var(--transition);
+    }
+
+    .project-card:hover .project-thumb::after { opacity: 0.5; }
+
+    .project-body { padding: 24px; }
+
+    .project-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .project-tags span {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+    }
+
+    /* ============ BLOG ============ */
+    .blog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .blog-item {
+      padding: 28px 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .blog-item:last-child { border-bottom: 1px solid var(--border); }
+
+    .blog-item:hover { padding-left: 12px; }
+
+    .blog-item:hover .blog-title { color: var(--text-tertiary); }
+
+    .blog-info { flex: 1; }
+
+    .blog-date {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .blog-title {
+      font-size: 17px;
+      font-weight: 600;
+      transition: color var(--transition);
+    }
+
+    .blog-arrow {
+      font-size: 20px;
+      color: var(--text-tertiary);
+      transition: transform var(--transition);
+    }
+
+    .blog-item:hover .blog-arrow { transform: translateX(6px); }
+
+    /* ============ CONTACT ============ */
+    .contact {
+      text-align: center;
+      padding-bottom: 80px;
+    }
+
+    .contact-title {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .contact-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all var(--transition);
+    }
+
+    .contact-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* ============ ANIMATIONS ============ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal:nth-child(2) { transition-delay: 0.1s; }
+    .reveal:nth-child(3) { transition-delay: 0.2s; }
+    .reveal:nth-child(4) { transition-delay: 0.3s; }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .menu-btn {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+      }
+      .menu-btn span {
+        width: 22px;
+        height: 2px;
+        background: var(--text);
+        transition: var(--transition);
+      }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 24px;
+        gap: 16px;
+      }
+      .about-content { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .blog-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+      section { padding: 70px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">WT.</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">关于</a></li>
+        <li><a href="#skills">技能</a></li>
+        <li><a href="#projects">项目</a></li>
+        <li><a href="#blog">博客</a></li>
+        <li><a href="#contact">联系</a></li>
+        <li><button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌙</button></li>
+      </ul>
+      <button class="menu-btn" onclick="toggleMenu()" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-content">
+      <p class="hero-greeting">Hello, World 👋</p>
+      <h1>I'm WUTONG <span class="wave">👋</span></h1>
+      <p class="hero-subtitle">
+        一个 <span class="highlight">全栈开发者</span>，热爱用代码创造有趣的东西。
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">查看作品 →</a>
+        <a href="#contact" class="btn btn-outline">联系我</a>
+      </div>
+    </div>
+    <div class="scroll-hint">↓</div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label reveal">01 — About</p>
+    <h2 class="section-title reveal">关于我</h2>
+    <div class="about-content">
+      <div class="about-text reveal">
+        <p>你好！我是 <strong>WUTONG</strong>，一名热爱技术的开发者。</p>
+        <p>我专注于构建优雅、高效的 Web 应用，从前端交互到后端架构都有涉猎。相信好的产品来自于对细节的执着和对用户体验的关怀。</p>
+        <p>工作之余，我喜欢写技术博客、参与开源项目、探索新技术。如果你有好玩的想法，欢迎随时聊聊！</p>
+      </div>
+      <div class="about-stats reveal">
+        <div class="stat-card">
+          <div class="stat-number">5+</div>
+          <div class="stat-label">年开发经验</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">完成项目</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">10k+</div>
+          <div class="stat-label">代码提交</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">学习热情</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="section-label reveal">02 — Skills</p>
+    <h2 class="section-title reveal">技术栈</h2>
+    <div class="skills-grid reveal">
+      <div class="skill-tag">JavaScript</div>
+      <div class="skill-tag">TypeScript</div>
+      <div class="skill-tag">React</div>
+      <div class="skill-tag">Vue.js</div>
+      <div class="skill-tag">Node.js</div>
+      <div class="skill-tag">Python</div>
+      <div class="skill-tag">Go</div>
+      <div class="skill-tag">Docker</div>
+      <div class="skill-tag">PostgreSQL</div>
+      <div class="skill-tag">Redis</div>
+      <div class="skill-tag">AWS</div>
+      <div class="skill-tag">Git</div>
+      <div class="skill-tag">Linux</div>
+      <div class="skill-tag">Nginx</div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label reveal">03 — Projects</p>
+    <h2 class="section-title reveal">精选项目</h2>
+    <div class="projects-grid">
+      <div class="project-card reveal" onclick="window.open('#','_blank')">
+        <div class="project-thumb">🚀</div>
+        <div class="project-body">
+          <h3 class="project-title">项目名称 One</h3>
+          <p class="project-desc">一个帮助团队协作的在线工具，支持实时编辑和任务管理。</p>
+          <div class="project-tags"><span>React</span><span>Node.js</span><span>WebSocket</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" onclick="window.open('#','_blank')">
+        <div class="project-thumb">📊</div>
+        <div class="project-body">
+          <h3 class="project-title">项目名称 Two</h3>
+          <p class="project-desc">数据可视化平台，将复杂数据转化为直观的图表和仪表盘。</p>
+          <div class="project-tags"><span>Vue</span><span>D3.js</span><span>Python</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" onclick="window.open('#','_blank')">
+        <div class="project-thumb">🤖</div>
+        <div class="project-body">
+          <h3 class="project-title">项目名称 Three</h3>
+          <p class="project-desc">基于 AI 的智能助手，能够自动分析和处理日常任务。</p>
+          <div class="project-tags"><span>Python</span><span>OpenAI</span><span>FastAPI</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal" onclick="window.open('#','_blank')">
+        <div class="project-thumb">📱</div>
+        <div class="project-body">
+          <h3 class="project-title">项目名称 Four</h3>
+          <p class="project-desc">跨平台移动应用，提供便捷的生活服务和个人管理功能。</p>
+          <div class="project-tags"><span>React Native</span><span>Go</span><span>Docker</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog">
+    <p class="section-label reveal">04 — Blog</p>
+    <h2 class="section-title reveal">最新文章</h2>
+    <div class="blog-list">
+      <div class="blog-item reveal" onclick="window.open('#','_blank')">
+        <div class="blog-info">
+          <p class="blog-date">2026-07-15</p>
+          <p class="blog-title">从零搭建个人技术博客的完整指南</p>
+        </div>
+        <span class="blog-arrow">→</span>
+      </div>
+      <div class="blog-item reveal" onclick="window.open('#','_blank')">
+        <div class="blog-info">
+          <p class="blog-date">2026-06-28</p>
+          <p class="blog-title">深入理解 React Server Components</p>
+        </div>
+        <span class="blog-arrow">→</span>
+      </div>
+      <div class="blog-item reveal" onclick="window.open('#','_blank')">
+        <div class="blog-info">
+          <p class="blog-date">2026-05-10</p>
+          <p class="blog-title">Docker 容器化部署的最佳实践</p>
+        </div>
+        <span class="blog-arrow">→</span>
+      </div>
+      <div class="blog-item reveal" onclick="window.open('#','_blank')">
+        <div class="blog-info">
+          <p class="blog-date">2026-04-02</p>
+          <p class="blog-title">为什么我选择了 TypeScript</p>
+        </div>
+        <span class="blog-arrow">→</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <p class="section-label reveal">05 — Contact</p>
+    <h2 class="contact-title reveal">一起做点有趣的事？</h2>
+    <p class="contact-desc reveal">无论是项目合作、技术交流还是随便聊聊，都欢迎找我。</p>
+    <div class="contact-links reveal">
+      <a href="mailto:your@email.com" class="contact-link" title="Email">✉️</a>
+      <a href="#" class="contact-link" title="GitHub">🐙</a>
+      <a href="#" class="contact-link" title="Twitter">🐦</a>
+      <a href="#" class="contact-link" title="LinkedIn">💼</a>
+      <a href="#" class="contact-link" title="WeChat">💬</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 WUTONG. Built with ❤️ and minimalism.</p>
+  </footer>
+
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☀️' : '🌙';
+      localStorage.setItem('theme', next);
+    }
+
+    // Load saved theme
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.querySelector('.theme-toggle').textContent = '☀️';
+      }
+    })();
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+
+    // Close menu on link click
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Smooth scroll offset for nav
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
