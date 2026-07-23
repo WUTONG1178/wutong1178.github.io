@@ -253,21 +253,6 @@
     }
 
     /* ============ ABOUT ============ */
-    .about-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: start;
-    }
-
-    .about-text p {
-      font-size: 16px;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-    }
-
-    .about-text p strong { color: var(--text); }
-
     .about-motto {
       font-size: clamp(22px, 4vw, 28px);
       color: #009999;
@@ -281,58 +266,44 @@
       color: #00cccc;
     }
 
-    .about-stats {
+    /* ============ MY WEBSITE ============ */
+    .website-links {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 24px;
     }
 
-    .stat-card {
+    .website-link-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
       background: var(--bg-secondary);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
-      text-align: center;
+      padding: 28px 24px;
       transition: all var(--transition);
     }
 
-    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+    .website-link-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+      border-color: #009999;
+    }
 
-    .stat-number {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -1px;
+    .website-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .website-info h3 {
+      font-size: 18px;
+      font-weight: 700;
       margin-bottom: 4px;
     }
 
-    .stat-label {
+    .website-info p {
       font-size: 13px;
       color: var(--text-tertiary);
-    }
-
-    /* ============ SKILLS ============ */
-    .skills-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .skill-tag {
-      padding: 8px 18px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: all var(--transition);
-      cursor: default;
-    }
-
-    .skill-tag:hover {
-      background: var(--accent);
-      color: var(--bg);
-      border-color: var(--accent);
-      transform: translateY(-2px);
     }
 
     /* ============ PROJECTS ============ */
@@ -404,52 +375,6 @@
       border: 1px solid var(--border);
       border-radius: 100px;
     }
-
-    /* ============ BLOG ============ */
-    .blog-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .blog-item {
-      padding: 28px 0;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      transition: all var(--transition);
-      cursor: pointer;
-    }
-
-    .blog-item:last-child { border-bottom: 1px solid var(--border); }
-
-    .blog-item:hover { padding-left: 12px; }
-
-    .blog-item:hover .blog-title { color: var(--text-tertiary); }
-
-    .blog-info { flex: 1; }
-
-    .blog-date {
-      font-size: 13px;
-      color: var(--text-tertiary);
-      margin-bottom: 4px;
-    }
-
-    .blog-title {
-      font-size: 17px;
-      font-weight: 600;
-      transition: color var(--transition);
-    }
-
-    .blog-arrow {
-      font-size: 20px;
-      color: var(--text-tertiary);
-      transition: transform var(--transition);
-    }
-
-    .blog-item:hover .blog-arrow { transform: translateX(6px); }
 
     /* ============ CONTACT ============ */
     .contact {
@@ -551,9 +476,8 @@
         padding: 20px 24px;
         gap: 16px;
       }
-      .about-content { grid-template-columns: 1fr; }
+      .website-links { grid-template-columns: 1fr; }
       .projects-grid { grid-template-columns: 1fr; }
-      .blog-item { flex-direction: column; align-items: flex-start; gap: 4px; }
       section { padding: 70px 20px; }
     }
   </style>
@@ -565,11 +489,10 @@
     <div class="nav-inner">
       <a href="#hero" class="nav-logo">WT.</a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="#about">关于</a></li>
-        <li><a href="#skills">领域</a></li>
-        <li><a href="#services">案例</a></li>
-        <li><a href="#blog">洞察</a></li>
-        <li><a href="#contact">联系</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#website">Website</a></li>
+        <li><a href="#project">Project</a></li>
+        <li><a href="#contact">Contact</a></li>
         <li><button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌙</button></li>
       </ul>
       <button class="menu-btn" onclick="toggleMenu()" aria-label="菜单">
@@ -588,7 +511,7 @@
       </p>
       <p class="hero-motto">Learn more, Apply more, Achieve more.</p>
       <div class="hero-cta">
-        <a href="#services" class="btn btn-primary">MORE →</a>
+        <a href="#project" class="btn btn-primary">MORE →</a>
         <a href="#contact" class="btn btn-outline">CONTACT →</a>
       </div>
     </div>
@@ -600,106 +523,42 @@
     <p class="section-label reveal">01 — About</p>
     <h2 class="section-title reveal">关于我</h2>
     <p class="about-motto reveal">Learn more, Apply more, Achieve more.</p>
-    <div class="about-content">
-      <div class="about-stats reveal">
-        <div class="stat-card">
-          <div class="stat-number">15+</div>
-          <div class="stat-label">年行业经验</div>
+  </section>
+
+  <!-- MY WEBSITE -->
+  <section id="website">
+    <p class="section-label reveal">02 — My Website</p>
+    <h2 class="section-title reveal">My Website</h2>
+    <div class="website-links reveal">
+      <a href="https://www.siemens.com/cn" target="_blank" class="website-link-card">
+        <div class="website-icon">🌐</div>
+        <div class="website-info">
+          <h3>Siemens China</h3>
+          <p>siemens.com/cn</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">50+</div>
-          <div class="stat-label">服务企业</div>
+      </a>
+      <a href="https://www.siemens.com/en-us/support/" target="_blank" class="website-link-card">
+        <div class="website-icon">🔧</div>
+        <div class="website-info">
+          <h3>Siemens Support</h3>
+          <p>siemens.com/support</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">100+</div>
-          <div class="stat-label">选型评估</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">∞</div>
-          <div class="stat-label">对制造业的热忱</div>
-        </div>
-      </div>
+      </a>
     </div>
   </section>
 
-  <!-- SKILLS -->
-  <section id="skills">
-    <p class="section-label reveal">02 — Expertise</p>
-    <h2 class="section-title reveal">专业领域</h2>
-    <div class="skills-grid reveal">
-      <div class="skill-tag">CAD 选型</div>
-      <div class="skill-tag">CAE 仿真</div>
-      <div class="skill-tag">PLM 实施</div>
-      <div class="skill-tag">MES 部署</div>
-      <div class="skill-tag">ERP 评估</div>
-      <div class="skill-tag">数字化转型</div>
-      <div class="skill-tag">智能制造</div>
-      <div class="skill-tag">工业物联网</div>
-      <div class="skill-tag">软件选型评估</div>
-      <div class="skill-tag">系统集成</div>
-      <div class="skill-tag">数据治理</div>
-      <div class="skill-tag">项目管理</div>
-      <div class="skill-tag">供应商管理</div>
-      <div class="skill-tag">培训赋能</div>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section id="services">
-    <p class="section-label reveal">03 — Services</p>
-    <h2 class="section-title reveal">服务案例</h2>
+  <!-- MY PROJECT -->
+  <section id="project">
+    <p class="section-label reveal">03 — My Project</p>
+    <h2 class="section-title reveal">My Project</h2>
     <div class="projects-grid">
-      <div class="project-card reveal" onclick="window.open('#','_blank')">
-        <div class="project-thumb">🏭</div>
+      <div class="project-card reveal" onclick="window.open('PLM_ROI_计算器.html','_blank')">
+        <div class="project-thumb">📊</div>
         <div class="project-body">
-          <h3 class="project-title">某汽车零部件企业 PLM 落地</h3>
-          <p class="project-desc">从需求梳理到供应商筛选再到分阶段实施，帮助企业打通设计—工艺—制造数据链。</p>
-          <div class="project-tags"><span>PLM</span><span>CAD集成</span><span>BOM管理</span></div>
+          <h3 class="project-title">CRRC DLS</h3>
+          <p class="project-desc">PLM建设ROI计算器 — 中车大连所数字化转型投资决策分析</p>
+          <div class="project-tags"><span>PLM</span><span>ROI</span><span>数字化转型</span></div>
         </div>
-      </div>
-      <div class="project-card reveal" onclick="window.open('#','_blank')">
-        <div class="project-thumb">🔧</div>
-        <div class="project-body">
-          <h3 class="project-title">CAE 仿真平台建设咨询</h3>
-          <p class="project-desc">帮助企业建立仿真规范体系，选型 CAE 工具链并搭建仿真数据管理平台。</p>
-          <div class="project-tags"><span>CAE</span><span>仿真规范</span><span>数据平台</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BLOG -->
-  <section id="blog">
-    <p class="section-label reveal">04 — Insights</p>
-    <h2 class="section-title reveal">行业洞察</h2>
-    <div class="blog-list">
-      <div class="blog-item reveal" onclick="window.open('#','_blank')">
-        <div class="blog-info">
-          <p class="blog-date">2026-07-15</p>
-          <p class="blog-title">PLM 选型：功能表对比是最容易踩坑的环节</p>
-        </div>
-        <span class="blog-arrow">→</span>
-      </div>
-      <div class="blog-item reveal" onclick="window.open('#','_blank')">
-        <div class="blog-info">
-          <p class="blog-date">2026-06-28</p>
-          <p class="blog-title">MES 项目为什么 70% 都「用不起来」？</p>
-        </div>
-        <span class="blog-arrow">→</span>
-      </div>
-      <div class="blog-item reveal" onclick="window.open('#','_blank')">
-        <div class="blog-info">
-          <p class="blog-date">2026-05-10</p>
-          <p class="blog-title">CAD/CAE/PLM 集成：打通设计到制造的数据流</p>
-        </div>
-        <span class="blog-arrow">→</span>
-      </div>
-      <div class="blog-item reveal" onclick="window.open('#','_blank')">
-        <div class="blog-info">
-          <p class="blog-date">2026-04-02</p>
-          <p class="blog-title">中小制造企业数字化转型：先想清楚三个问题</p>
-        </div>
-        <span class="blog-arrow">→</span>
       </div>
     </div>
   </section>
