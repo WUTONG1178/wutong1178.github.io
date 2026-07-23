@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WUTONG — 工业软件顾问</title>
-  <meta name="description" content="WUTONG — 工业软件顾问，专注数字化转型、智能制造与工业软件选型落地">
+  <title>AIMIN — 工业软件顾问</title>
+  <meta name="description" content="AIMIN — 工业软件顾问，专注数字化转型、智能制造与工业软件选型落地">
   <style>
     /* ============ RESET & BASE ============ */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -306,6 +306,137 @@
       color: var(--text-tertiary);
     }
 
+    /* ============ STOCK CARD ============ */
+    .stock-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all var(--transition);
+    }
+
+    .stock-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+      border-color: #009999;
+    }
+
+    .stock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .stock-status {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(0,153,153,0.1);
+      color: #009999;
+      white-space: nowrap;
+    }
+
+    .stock-status.error {
+      background: rgba(225,112,85,0.1);
+      color: #e17055;
+    }
+
+    .stock-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .stock-ticker {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+    }
+
+    .stock-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stock-price {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .stock-change {
+      font-size: 14px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #e6f7f7;
+      color: #009999;
+    }
+
+    [data-theme="dark"] .stock-change {
+      background: rgba(0,153,153,0.15);
+      color: #00cccc;
+    }
+
+    .stock-change.down {
+      background: #fff0f0;
+      color: #e17055;
+    }
+
+    [data-theme="dark"] .stock-change.down {
+      background: rgba(225,112,85,0.15);
+      color: #e17055;
+    }
+
+    .stock-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 24px;
+      margin-bottom: 16px;
+    }
+
+    .stock-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stock-metric-label {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .stock-metric-value {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .stock-link {
+      font-size: 13px;
+      color: #009999;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stock-link:hover {
+      color: #006666;
+    }
+
+    [data-theme="dark"] .stock-link:hover {
+      color: #00aaaa;
+    }
+
+    .stock-source {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
     /* ============ PROJECTS ============ */
     .projects-grid {
       display: grid;
@@ -421,6 +552,80 @@
       transform: translateY(-3px);
     }
 
+    .contact-link.wechat {
+      color: #07C160;
+      border-color: rgba(7,193,96,0.4);
+    }
+
+    .contact-link.wechat:hover {
+      background: #07C160;
+      color: #fff;
+      border-color: #07C160;
+      transform: translateY(-3px);
+    }
+
+    .contact-link.wechat svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      fill: currentColor;
+    }
+
+    /* ===== WeChat Modal ===== */
+    .wechat-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .wechat-modal.show { display: flex; }
+    .wechat-modal-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px 28px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .wechat-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 26px;
+      line-height: 1;
+      color: var(--text-tertiary);
+      cursor: pointer;
+    }
+    .wechat-modal-icon svg { width: 56px; height: 56px; }
+    .wechat-modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 12px 0 4px;
+    }
+    .wechat-modal-tip {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 20px;
+    }
+    .wechat-qr-img {
+      width: 100%;
+      max-width: 240px;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: block;
+      margin: 0 auto;
+    }
+
     /* ============ FOOTER ============ */
     footer {
       border-top: 1px solid var(--border);
@@ -489,8 +694,7 @@
     <div class="nav-inner">
       <a href="#hero" class="nav-logo">WT.</a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="#about">About</a></li>
-        <li><a href="#website">Website</a></li>
+        <li><a href="#website">Favorite</a></li>
         <li><a href="#project">Project</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌙</button></li>
@@ -505,9 +709,9 @@
   <div class="hero" id="hero">
     <div class="hero-content">
       <p class="hero-greeting">Industrial Software Consultant</p>
-      <h1>I'm WUTONG</h1>
+      <h1>I'm AIMIN</h1>
       <p class="hero-subtitle">
-        一名 <span class="highlight">工业软件顾问</span>，帮助企业选型、落地、优化数字化工具，让技术真正服务于工业。
+        一名 <span class="highlight">工业软件顾问</span>，帮助企业选型、落地、优化数字化系统，让技术真正服务于工业。
       </p>
       <p class="hero-motto">Learn more, Apply more, Achieve more.</p>
       <div class="hero-cta">
@@ -518,17 +722,10 @@
     <div class="scroll-hint">↓</div>
   </div>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <p class="section-label reveal">01 — About</p>
-    <h2 class="section-title reveal">关于我</h2>
-    <p class="about-motto reveal">Learn more, Apply more, Achieve more.</p>
-  </section>
-
   <!-- MY WEBSITE -->
   <section id="website">
-    <p class="section-label reveal">02 — My Website</p>
-    <h2 class="section-title reveal">My Website</h2>
+    <p class="section-label reveal">01 — My Favorite</p>
+    <h2 class="section-title reveal">My Favorite</h2>
     <div class="website-links reveal">
       <a href="https://www.siemens.com/cn" target="_blank" class="website-link-card">
         <div class="website-icon">🌐</div>
@@ -545,11 +742,34 @@
         </div>
       </a>
     </div>
+    <div class="stock-card reveal" style="margin-top:24px;">
+      <div class="stock-header">
+        <div>
+          <div class="stock-name">Siemens AG 📈</div>
+          <div class="stock-ticker">SIE · XETRA · ISIN: DE0007236101</div>
+        </div>
+        <div class="stock-status" id="stockStatus">加载中...</div>
+      </div>
+      <div class="stock-price-row">
+        <div class="stock-price" id="stockPrice">--</div>
+        <div class="stock-change" id="stockChange">--</div>
+      </div>
+      <div class="stock-metrics">
+        <div class="stock-metric"><span class="stock-metric-label">今日最高</span><span class="stock-metric-value" id="stockDayHigh">--</span></div>
+        <div class="stock-metric"><span class="stock-metric-label">今日最低</span><span class="stock-metric-value" id="stockDayLow">--</span></div>
+        <div class="stock-metric"><span class="stock-metric-label">52周最高</span><span class="stock-metric-value" id="stock52High">€284.65</span></div>
+        <div class="stock-metric"><span class="stock-metric-label">52周最低</span><span class="stock-metric-value" id="stock52Low">€198.00</span></div>
+        <div class="stock-metric"><span class="stock-metric-label">前收盘价</span><span class="stock-metric-value" id="stockPrevClose">--</span></div>
+        <div class="stock-metric"><span class="stock-metric-label">成交量</span><span class="stock-metric-value" id="stockVolume">--</span></div>
+      </div>
+      <a href="https://www.msn.cn/zh-cn/money/stockdetails/sie-de-stock/fi-aftpzr" target="_blank" class="stock-link">查看实时行情 →</a>
+      <div class="stock-source" id="stockSource">数据来源：Yahoo Finance · 实时更新</div>
+    </div>
   </section>
 
   <!-- MY PROJECT -->
   <section id="project">
-    <p class="section-label reveal">03 — My Project</p>
+    <p class="section-label reveal">02 — My Project</p>
     <h2 class="section-title reveal">My Project</h2>
     <div class="projects-grid">
       <div class="project-card reveal" onclick="window.open('PLM_ROI_计算器_mobile.html','_blank')">
@@ -565,22 +785,33 @@
 
   <!-- CONTACT -->
   <section id="contact" class="contact">
-    <p class="section-label reveal">05 — Contact</p>
-    <h2 class="contact-title reveal">聊聊你的数字化需求？</h2>
-    <p class="contact-desc reveal">无论是软件选型困惑、实施落地问题，还是想了解行业趋势，都可以找我咨询。</p>
+    <p class="section-label reveal">03 — Contact</p>
     <div class="contact-links reveal">
       <a href="mailto:45268725@qq.com" class="contact-link" title="Email">✉️</a>
+      <a href="javascript:void(0)" id="wechatLink" class="contact-link wechat" title="加我微信"><svg viewBox="410 350 510 450" fill="currentColor"><path d="M664.5 373.3c-126.7 0-229.3 82.3-229.3 183.7 0 101.3 102.7 183.7 229.3 183.7 29.9 0 58.5-5.6 84.9-15.6l79.4 43.3-21.1-73.6c54.6-43.3 89.6-100.8 89.6-162.1 0-101.3-102.7-159-224.8-159z m-113.6 116.3c20.6 0 37.3 16.7 37.3 37.3s-16.7 37.3-37.3 37.3-37.3-16.7-37.3-37.3 16.7-37.3 37.3-37.3z m181.3 0c20.6 0 37.3 16.7 37.3 37.3s-16.7 37.3-37.3 37.3-37.3-16.7-37.3-37.3 16.7-37.3 37.3-37.3z"/></svg></a>
       <a href="#" class="contact-link" title="GitHub">🐙</a>
       <a href="#" class="contact-link" title="Twitter">🐦</a>
       <a href="#" class="contact-link" title="LinkedIn">💼</a>
-      <a href="#" class="contact-link" title="WeChat">💬</a>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 WUTONG. Learn more, Apply more, Achieve more.</p>
+    <p>© 2026 AIMIN. Learn more, Apply more, Achieve more.</p>
   </footer>
+
+  <!-- WeChat Modal -->
+  <div class="wechat-modal" id="wechatModal">
+    <div class="wechat-modal-box">
+      <button class="wechat-modal-close" onclick="closeWechat()" aria-label="关闭">×</button>
+      <div class="wechat-modal-icon">
+        <svg viewBox="410 350 510 450" fill="#07C160"><path d="M664.5 373.3c-126.7 0-229.3 82.3-229.3 183.7 0 101.3 102.7 183.7 229.3 183.7 29.9 0 58.5-5.6 84.9-15.6l79.4 43.3-21.1-73.6c54.6-43.3 89.6-100.8 89.6-162.1 0-101.3-102.7-159-224.8-159z m-113.6 116.3c20.6 0 37.3 16.7 37.3 37.3s-16.7 37.3-37.3 37.3-37.3-16.7-37.3-37.3 16.7-37.3 37.3-37.3z m181.3 0c20.6 0 37.3 16.7 37.3 37.3s-16.7 37.3-37.3 37.3-37.3-16.7-37.3-37.3 16.7-37.3 37.3-37.3z"/></svg>
+      </div>
+      <h3 class="wechat-modal-title">加我微信</h3>
+      <p class="wechat-modal-tip">微信扫一扫，加我为朋友</p>
+      <img src="wechat-qr.jpg" alt="微信二维码" class="wechat-qr-img" id="wechatQrImg">
+    </div>
+  </div>
 
   <script>
     // Theme toggle
@@ -634,6 +865,136 @@
         }
       });
     });
+
+    // ===== WeChat Modal =====
+    document.getElementById('wechatLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      openWechat();
+    });
+
+    function openWechat() {
+      document.getElementById('wechatModal').classList.add('show');
+    }
+    function closeWechat() {
+      document.getElementById('wechatModal').classList.remove('show');
+    }
+    // 点击弹窗外部关闭
+    document.getElementById('wechatModal').addEventListener('click', function(e) {
+      if (e.target === this) closeWechat();
+    });
+    // Esc 关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWechat();
+    });
+
+    // ===== Siemens Stock Real-time Data =====
+    (function() {
+      // 可用的 CORS 代理（proxy.cors.sh 已验证可用，其余为备用）
+      const CORS_PROXIES = [
+        { base: 'https://proxy.cors.sh/', encode: false },
+        { base: 'https://api.allorigins.win/raw?url=', encode: true },
+        { base: 'https://corsproxy.io/?url=', encode: true },
+        { base: 'https://api.codetabs.com/v1/proxy/?quest=', encode: true }
+      ];
+      const YAHOO_URL = 'https://query1.finance.yahoo.com/v8/finance/chart/SIE.DE?range=5d&interval=1d';
+      const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+      function formatNum(n) {
+        if (n === null || n === undefined) return '--';
+        return '€' + Number(n).toFixed(2);
+      }
+
+      function formatVolume(v) {
+        if (v === null || v === undefined) return '--';
+        if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+        if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K';
+        return String(v);
+      }
+
+      function formatChange(pct) {
+        if (pct === null || pct === undefined) return '--';
+        const sign = pct >= 0 ? '+' : '';
+        return sign + pct.toFixed(2) + '%';
+      }
+
+      function updateStockUI(data) {
+        const meta = data.chart.result[0].meta;
+        const price = meta.regularMarketPrice;
+        const prevClose = meta.chartPreviousClose || meta.previousClose;
+        const changePct = prevClose ? ((price - prevClose) / prevClose * 100) : null;
+
+        // Price
+        document.getElementById('stockPrice').textContent = formatNum(price);
+
+        // Change
+        const changeEl = document.getElementById('stockChange');
+        changeEl.textContent = formatChange(changePct);
+        changeEl.className = 'stock-change' + (changePct >= 0 ? '' : ' down');
+
+        // Day High/Low
+        const quotes = data.chart.result[0].indicators?.quote?.[0];
+        if (quotes) {
+          const highs = quotes.high.filter(v => v !== null);
+          const lows = quotes.low.filter(v => v !== null);
+          document.getElementById('stockDayHigh').textContent = formatNum(Math.max(...highs));
+          document.getElementById('stockDayLow').textContent = formatNum(Math.min(...lows));
+        }
+
+        // Previous Close
+        document.getElementById('stockPrevClose').textContent = formatNum(prevClose);
+
+        // Volume
+        if (quotes) {
+          const volumes = quotes.volume.filter(v => v !== null);
+          document.getElementById('stockVolume').textContent = formatVolume(volumes[volumes.length - 1] || meta.regularMarketVolume);
+        }
+
+        // 52-week range (from meta if available)
+        if (meta.fiftyTwoWeekHigh) document.getElementById('stock52High').textContent = formatNum(meta.fiftyTwoWeekHigh);
+        if (meta.fiftyTwoWeekLow) document.getElementById('stock52Low').textContent = formatNum(meta.fiftyTwoWeekLow);
+
+        // Status
+        const statusEl = document.getElementById('stockStatus');
+        const now = new Date();
+        const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        statusEl.textContent = '已更新 ' + timeStr;
+        statusEl.className = 'stock-status';
+
+        document.getElementById('stockSource').textContent = '数据来源：Yahoo Finance · 每5分钟自动刷新';
+      }
+
+      async function fetchStock() {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        for (const proxy of CORS_PROXIES) {
+          try {
+            const url = proxy.encode ? proxy.base + encodeURIComponent(YAHOO_URL) : proxy.base + YAHOO_URL;
+            const resp = await fetch(url, { signal: controller.signal });
+            if (!resp.ok) continue;
+            const data = await resp.json();
+            if (data && data.chart && data.chart.result && data.chart.result.length > 0) {
+              clearTimeout(timeoutId);
+              updateStockUI(data);
+              return; // success
+            }
+          } catch(e) {
+            continue; // try next proxy
+          }
+        }
+        clearTimeout(timeoutId);
+        // All proxies failed
+        const statusEl = document.getElementById('stockStatus');
+        statusEl.textContent = '点击重试获取实时数据';
+        statusEl.className = 'stock-status error';
+        statusEl.style.cursor = 'pointer';
+        statusEl.onclick = fetchStock;
+      }
+
+      // Initial fetch
+      fetchStock();
+      // Auto refresh
+      setInterval(fetchStock, REFRESH_INTERVAL);
+    })();
   </script>
 </body>
 </html>
