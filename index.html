@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WUTONG — Developer & Creator</title>
-  <meta name="description" content="个人主页 — 开发者、创作者">
+  <title>WUTONG — 工业软件顾问</title>
+  <meta name="description" content="WUTONG — 工业软件顾问，专注数字化转型、智能制造与工业软件选型落地">
   <style>
     /* ============ RESET & BASE ============ */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -150,16 +150,6 @@
       margin-bottom: 20px;
     }
 
-    .hero h1 .wave { display: inline-block; animation: wave 2.5s ease-in-out infinite; transform-origin: 70% 70%; }
-
-    @keyframes wave {
-      0%, 60%, 100% { transform: rotate(0deg); }
-      10% { transform: rotate(14deg); }
-      20% { transform: rotate(-8deg); }
-      30% { transform: rotate(14deg); }
-      40% { transform: rotate(-4deg); }
-      50% { transform: rotate(10deg); }
-    }
 
     .hero-subtitle {
       font-size: clamp(16px, 3vw, 20px);
@@ -171,6 +161,15 @@
     .hero-subtitle .highlight {
       color: var(--text);
       font-weight: 600;
+    }
+
+    .hero-motto {
+      font-size: 15px;
+      color: var(--text-tertiary);
+      letter-spacing: 1px;
+      font-style: italic;
+      font-weight: 500;
+      margin-bottom: 32px;
     }
 
     .hero-cta {
@@ -269,9 +268,22 @@
 
     .about-text p strong { color: var(--text); }
 
+    .about-motto {
+      font-size: clamp(22px, 4vw, 28px);
+      color: #009999;
+      margin-bottom: 48px;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    [data-theme="dark"] .about-motto {
+      color: #00cccc;
+    }
+
     .about-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 24px;
     }
 
@@ -554,9 +566,9 @@
       <a href="#hero" class="nav-logo">WT.</a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#about">关于</a></li>
-        <li><a href="#skills">技能</a></li>
-        <li><a href="#projects">项目</a></li>
-        <li><a href="#blog">博客</a></li>
+        <li><a href="#skills">领域</a></li>
+        <li><a href="#services">案例</a></li>
+        <li><a href="#blog">洞察</a></li>
         <li><a href="#contact">联系</a></li>
         <li><button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">🌙</button></li>
       </ul>
@@ -569,14 +581,15 @@
   <!-- HERO -->
   <div class="hero" id="hero">
     <div class="hero-content">
-      <p class="hero-greeting">Hello, World 👋</p>
-      <h1>I'm WUTONG <span class="wave">👋</span></h1>
+      <p class="hero-greeting">Industrial Software Consultant</p>
+      <h1>I'm WUTONG</h1>
       <p class="hero-subtitle">
-        一个 <span class="highlight">全栈开发者</span>，热爱用代码创造有趣的东西。
+        一名 <span class="highlight">工业软件顾问</span>，帮助企业选型、落地、优化数字化工具，让技术真正服务于工业。
       </p>
+      <p class="hero-motto">Learn more, Apply more, Achieve more.</p>
       <div class="hero-cta">
-        <a href="#projects" class="btn btn-primary">查看作品 →</a>
-        <a href="#contact" class="btn btn-outline">联系我</a>
+        <a href="#services" class="btn btn-primary">MORE →</a>
+        <a href="#contact" class="btn btn-outline">CONTACT →</a>
       </div>
     </div>
     <div class="scroll-hint">↓</div>
@@ -586,28 +599,24 @@
   <section id="about">
     <p class="section-label reveal">01 — About</p>
     <h2 class="section-title reveal">关于我</h2>
+    <p class="about-motto reveal">Learn more, Apply more, Achieve more.</p>
     <div class="about-content">
-      <div class="about-text reveal">
-        <p>你好！我是 <strong>WUTONG</strong>，一名热爱技术的开发者。</p>
-        <p>我专注于构建优雅、高效的 Web 应用，从前端交互到后端架构都有涉猎。相信好的产品来自于对细节的执着和对用户体验的关怀。</p>
-        <p>工作之余，我喜欢写技术博客、参与开源项目、探索新技术。如果你有好玩的想法，欢迎随时聊聊！</p>
-      </div>
       <div class="about-stats reveal">
         <div class="stat-card">
-          <div class="stat-number">5+</div>
-          <div class="stat-label">年开发经验</div>
+          <div class="stat-number">15+</div>
+          <div class="stat-label">年行业经验</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">30+</div>
-          <div class="stat-label">完成项目</div>
+          <div class="stat-number">50+</div>
+          <div class="stat-label">服务企业</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">10k+</div>
-          <div class="stat-label">代码提交</div>
+          <div class="stat-number">100+</div>
+          <div class="stat-label">选型评估</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">∞</div>
-          <div class="stat-label">学习热情</div>
+          <div class="stat-label">对制造业的热忱</div>
         </div>
       </div>
     </div>
@@ -615,61 +624,45 @@
 
   <!-- SKILLS -->
   <section id="skills">
-    <p class="section-label reveal">02 — Skills</p>
-    <h2 class="section-title reveal">技术栈</h2>
+    <p class="section-label reveal">02 — Expertise</p>
+    <h2 class="section-title reveal">专业领域</h2>
     <div class="skills-grid reveal">
-      <div class="skill-tag">JavaScript</div>
-      <div class="skill-tag">TypeScript</div>
-      <div class="skill-tag">React</div>
-      <div class="skill-tag">Vue.js</div>
-      <div class="skill-tag">Node.js</div>
-      <div class="skill-tag">Python</div>
-      <div class="skill-tag">Go</div>
-      <div class="skill-tag">Docker</div>
-      <div class="skill-tag">PostgreSQL</div>
-      <div class="skill-tag">Redis</div>
-      <div class="skill-tag">AWS</div>
-      <div class="skill-tag">Git</div>
-      <div class="skill-tag">Linux</div>
-      <div class="skill-tag">Nginx</div>
+      <div class="skill-tag">CAD 选型</div>
+      <div class="skill-tag">CAE 仿真</div>
+      <div class="skill-tag">PLM 实施</div>
+      <div class="skill-tag">MES 部署</div>
+      <div class="skill-tag">ERP 评估</div>
+      <div class="skill-tag">数字化转型</div>
+      <div class="skill-tag">智能制造</div>
+      <div class="skill-tag">工业物联网</div>
+      <div class="skill-tag">软件选型评估</div>
+      <div class="skill-tag">系统集成</div>
+      <div class="skill-tag">数据治理</div>
+      <div class="skill-tag">项目管理</div>
+      <div class="skill-tag">供应商管理</div>
+      <div class="skill-tag">培训赋能</div>
     </div>
   </section>
 
-  <!-- PROJECTS -->
-  <section id="projects">
-    <p class="section-label reveal">03 — Projects</p>
-    <h2 class="section-title reveal">精选项目</h2>
+  <!-- SERVICES -->
+  <section id="services">
+    <p class="section-label reveal">03 — Services</p>
+    <h2 class="section-title reveal">服务案例</h2>
     <div class="projects-grid">
       <div class="project-card reveal" onclick="window.open('#','_blank')">
-        <div class="project-thumb">🚀</div>
+        <div class="project-thumb">🏭</div>
         <div class="project-body">
-          <h3 class="project-title">项目名称 One</h3>
-          <p class="project-desc">一个帮助团队协作的在线工具，支持实时编辑和任务管理。</p>
-          <div class="project-tags"><span>React</span><span>Node.js</span><span>WebSocket</span></div>
+          <h3 class="project-title">某汽车零部件企业 PLM 落地</h3>
+          <p class="project-desc">从需求梳理到供应商筛选再到分阶段实施，帮助企业打通设计—工艺—制造数据链。</p>
+          <div class="project-tags"><span>PLM</span><span>CAD集成</span><span>BOM管理</span></div>
         </div>
       </div>
       <div class="project-card reveal" onclick="window.open('#','_blank')">
-        <div class="project-thumb">📊</div>
+        <div class="project-thumb">🔧</div>
         <div class="project-body">
-          <h3 class="project-title">项目名称 Two</h3>
-          <p class="project-desc">数据可视化平台，将复杂数据转化为直观的图表和仪表盘。</p>
-          <div class="project-tags"><span>Vue</span><span>D3.js</span><span>Python</span></div>
-        </div>
-      </div>
-      <div class="project-card reveal" onclick="window.open('#','_blank')">
-        <div class="project-thumb">🤖</div>
-        <div class="project-body">
-          <h3 class="project-title">项目名称 Three</h3>
-          <p class="project-desc">基于 AI 的智能助手，能够自动分析和处理日常任务。</p>
-          <div class="project-tags"><span>Python</span><span>OpenAI</span><span>FastAPI</span></div>
-        </div>
-      </div>
-      <div class="project-card reveal" onclick="window.open('#','_blank')">
-        <div class="project-thumb">📱</div>
-        <div class="project-body">
-          <h3 class="project-title">项目名称 Four</h3>
-          <p class="project-desc">跨平台移动应用，提供便捷的生活服务和个人管理功能。</p>
-          <div class="project-tags"><span>React Native</span><span>Go</span><span>Docker</span></div>
+          <h3 class="project-title">CAE 仿真平台建设咨询</h3>
+          <p class="project-desc">帮助企业建立仿真规范体系，选型 CAE 工具链并搭建仿真数据管理平台。</p>
+          <div class="project-tags"><span>CAE</span><span>仿真规范</span><span>数据平台</span></div>
         </div>
       </div>
     </div>
@@ -677,34 +670,34 @@
 
   <!-- BLOG -->
   <section id="blog">
-    <p class="section-label reveal">04 — Blog</p>
-    <h2 class="section-title reveal">最新文章</h2>
+    <p class="section-label reveal">04 — Insights</p>
+    <h2 class="section-title reveal">行业洞察</h2>
     <div class="blog-list">
       <div class="blog-item reveal" onclick="window.open('#','_blank')">
         <div class="blog-info">
           <p class="blog-date">2026-07-15</p>
-          <p class="blog-title">从零搭建个人技术博客的完整指南</p>
+          <p class="blog-title">PLM 选型：功能表对比是最容易踩坑的环节</p>
         </div>
         <span class="blog-arrow">→</span>
       </div>
       <div class="blog-item reveal" onclick="window.open('#','_blank')">
         <div class="blog-info">
           <p class="blog-date">2026-06-28</p>
-          <p class="blog-title">深入理解 React Server Components</p>
+          <p class="blog-title">MES 项目为什么 70% 都「用不起来」？</p>
         </div>
         <span class="blog-arrow">→</span>
       </div>
       <div class="blog-item reveal" onclick="window.open('#','_blank')">
         <div class="blog-info">
           <p class="blog-date">2026-05-10</p>
-          <p class="blog-title">Docker 容器化部署的最佳实践</p>
+          <p class="blog-title">CAD/CAE/PLM 集成：打通设计到制造的数据流</p>
         </div>
         <span class="blog-arrow">→</span>
       </div>
       <div class="blog-item reveal" onclick="window.open('#','_blank')">
         <div class="blog-info">
           <p class="blog-date">2026-04-02</p>
-          <p class="blog-title">为什么我选择了 TypeScript</p>
+          <p class="blog-title">中小制造企业数字化转型：先想清楚三个问题</p>
         </div>
         <span class="blog-arrow">→</span>
       </div>
@@ -714,10 +707,10 @@
   <!-- CONTACT -->
   <section id="contact" class="contact">
     <p class="section-label reveal">05 — Contact</p>
-    <h2 class="contact-title reveal">一起做点有趣的事？</h2>
-    <p class="contact-desc reveal">无论是项目合作、技术交流还是随便聊聊，都欢迎找我。</p>
+    <h2 class="contact-title reveal">聊聊你的数字化需求？</h2>
+    <p class="contact-desc reveal">无论是软件选型困惑、实施落地问题，还是想了解行业趋势，都可以找我咨询。</p>
     <div class="contact-links reveal">
-      <a href="mailto:your@email.com" class="contact-link" title="Email">✉️</a>
+      <a href="mailto:45268725@qq.com" class="contact-link" title="Email">✉️</a>
       <a href="#" class="contact-link" title="GitHub">🐙</a>
       <a href="#" class="contact-link" title="Twitter">🐦</a>
       <a href="#" class="contact-link" title="LinkedIn">💼</a>
@@ -727,7 +720,7 @@
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 WUTONG. Built with ❤️ and minimalism.</p>
+    <p>© 2026 WUTONG. Learn more, Apply more, Achieve more.</p>
   </footer>
 
   <script>
