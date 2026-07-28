@@ -696,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() { _domReady = true; });
 const defaults = {
     laborRate: 77.6,
     bomItems: 72000,
-    bomErrorRate: 10,    // stored as percentage
+    bomErrorRate: 10,
     annualChanges: 1200,
     teamSize: 110,
     newProjCount: 2.5,
@@ -707,196 +707,46 @@ let chartAnnualCF = null;
 let chartCumCF = null;
 let chartBenefit = null;
 
-// ===== Chart initialization =====
 function initCharts() {
-    if (typeof Chart === 'undefined') {
-        console.warn('Chart.js not loaded yet, retrying...');
-        setTimeout(initCharts, 200);
-        return;
-    }
-
+    if (typeof Chart === 'undefined') { setTimeout(initCharts, 200); return; }
     try {
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { labels: { font: { size: 11, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: 16 } }
-            }
-        };
-
-        // Chart 1: 年度净现金流 (Bar)
+        const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 11, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: 16 } } } };
         const ctx1 = document.getElementById('chartAnnualCF');
-        if (!ctx1) { console.warn('chartAnnualCF canvas not found'); return; }
+        if (!ctx1) return;
         if (chartAnnualCF) chartAnnualCF.destroy();
         chartAnnualCF = new Chart(ctx1, {
             type: 'bar',
-            data: {
-                labels: ['第1年', '第2年', '第3年', '第4年', '第5年'],
-                datasets: [{
-                    label: '年度净现金流 (万元)',
-                    data: [19, 650, 850, 850, 850],
-                    backgroundColor: ['#fab1a0', '#00b894', '#00b894', '#00b894', '#00b894'],
-                    borderColor: ['#e17055', '#00b894', '#00b894', '#00b894', '#00b894'],
-                    borderWidth: 1,
-                    borderRadius: 6,
-                    barThickness: 36,
-                }]
-            },
-            options: {
-                ...commonOptions,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { callback: v => v + '万', font: { size: 10 } },
-                        grid: { color: '#f0f0f0' }
-                    },
-                    x: { ticks: { font: { size: 10 } }, grid: { display: false } }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) { return (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(0) + ' 万元'; }
-                        }
-                    }
-                }
-            }
+            data: { labels: ['第1年', '第2年', '第3年', '第4年', '第5年'], datasets: [{ label: '年度净现金流 (万元)', data: [19, 650, 850, 850, 850], backgroundColor: ['#fab1a0', '#00b894', '#00b894', '#00b894', '#00b894'], borderColor: ['#e17055', '#00b894', '#00b894', '#00b894', '#00b894'], borderWidth: 1, borderRadius: 6, barThickness: 36 }] },
+            options: { ...commonOptions, scales: { y: { beginAtZero: true, ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(0) + ' 万元' } } } }
         });
-
-        // Chart 2: 累计净现金流 (Line)
         const ctx2 = document.getElementById('chartCumCF');
-        if (!ctx2) { console.warn('chartCumCF canvas not found'); return; }
+        if (!ctx2) return;
         if (chartCumCF) chartCumCF.destroy();
         chartCumCF = new Chart(ctx2, {
             type: 'line',
-            data: {
-                labels: ['第1年', '第2年', '第3年', '第4年', '第5年'],
-                datasets: [{
-                    label: '累计净现金流',
-                    data: [19, 669, 1519, 2369, 3219],
-                    borderColor: '#0984e3',
-                    backgroundColor: 'rgba(9,132,227,0.08)',
-                    borderWidth: 2.5,
-                    pointBackgroundColor: '#0984e3',
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    tension: 0.3,
-                    fill: true,
-                }]
-            },
-            options: {
-                ...commonOptions,
-                scales: {
-                    y: {
-                        ticks: { callback: v => v + '万', font: { size: 10 } },
-                        grid: { color: '#f0f0f0' }
-                    },
-                    x: { ticks: { font: { size: 10 } }, grid: { display: false } }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) { return (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(0) + ' 万元'; }
-                        }
-                    }
-                }
-            }
+            data: { labels: ['第1年', '第2年', '第3年', '第4年', '第5年'], datasets: [{ label: '累计净现金流', data: [19, 669, 1519, 2369, 3219], borderColor: '#0984e3', backgroundColor: 'rgba(9,132,227,0.08)', borderWidth: 2.5, pointBackgroundColor: '#0984e3', pointRadius: 5, pointHoverRadius: 7, tension: 0.3, fill: true }] },
+            options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(0) + ' 万元' } } } }
         });
-
-        // Chart 3: 年度总收益构成 (Doughnut)
         const ctx3 = document.getElementById('chartBenefit');
-        if (!ctx3) { console.warn('chartBenefit canvas not found'); return; }
+        if (!ctx3) return;
         if (chartBenefit) chartBenefit.destroy();
         chartBenefit = new Chart(ctx3, {
             type: 'doughnut',
-            data: {
-                labels: ['构型+BOM', '工程变更', '质量损失', '设计协同', '研发产能', '上市周期', '合规审计'],
-                datasets: [{
-                    data: [287, 133, 149, 126, 80, 60, 15],
-                    backgroundColor: [
-                        '#0984e3', '#6c5ce7', '#e17055', '#00b894',
-                        '#fdcb6e', '#e84393', '#636e72'
-                    ],
-                    borderColor: '#fff',
-                    borderWidth: 2,
-                    hoverBorderWidth: 3,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '55%',
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            font: { size: 10, family: 'PingFang SC, Microsoft YaHei, sans-serif' },
-                            usePointStyle: true,
-                            padding: 10,
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) {
-                                var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0);
-                                return ctx.label + ': ' + ctx.raw.toFixed(0) + ' 万元 (' + (ctx.raw / total * 100).toFixed(1) + '%)';
-                            }
-                        }
-                    }
-                }
-            }
+            data: { labels: ['构型+BOM', '工程变更', '质量损失', '设计协同', '研发产能', '上市周期', '合规审计'], datasets: [{ data: [287, 133, 149, 126, 80, 60, 15], backgroundColor: ['#0984e3', '#6c5ce7', '#e17055', '#00b894', '#fdcb6e', '#e84393', '#636e72'], borderColor: '#fff', borderWidth: 2, hoverBorderWidth: 3 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'right', labels: { font: { size: 10, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: 10 } }, tooltip: { callbacks: { label: function(ctx) { var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0); return ctx.label + ': ' + ctx.raw.toFixed(0) + ' 万元 (' + (ctx.raw / total * 100).toFixed(1) + '%)'; } } } } }
         });
-
-        console.log('Charts initialized successfully');
-    } catch(e) {
-        console.error('Chart initialization error:', e);
-    }
+    } catch(e) { console.error('Chart init error:', e); }
 }
 
-function updateCharts(layer1Total, layer2Total, annualBenefit,
-    configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit,
-    rdCapacity, cycleTime, complianceTotal,
-    y1_net, y2_net, y3_net, y4_net, y5_net,
-    y1_cum, y2_cum, y3_cum, y4_cum, y5_cum) {
-
+function updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal, y1_net, y2_net, y3_net, y4_net, y5_net, y1_cum, y2_cum, y3_cum, y4_cum, y5_cum) {
     try {
-        // Chart 1: 年度净现金流
-        if (chartAnnualCF) {
-            chartAnnualCF.data.datasets[0].data = [y1_net, y2_net, y3_net, y4_net, y5_net];
-            chartAnnualCF.data.datasets[0].backgroundColor = [
-                y1_net >= 0 ? '#00b894' : '#fab1a0',
-                y2_net >= 0 ? '#00b894' : '#fab1a0',
-                y3_net >= 0 ? '#00b894' : '#fab1a0',
-                y4_net >= 0 ? '#00b894' : '#fab1a0',
-                y5_net >= 0 ? '#00b894' : '#fab1a0',
-            ];
-            chartAnnualCF.update('none');
-        }
-
-        // Chart 2: 累计净现金流
-        if (chartCumCF) {
-            chartCumCF.data.datasets[0].data = [y1_cum, y2_cum, y3_cum, y4_cum, y5_cum];
-            chartCumCF.update('none');
-        }
-
-        // Chart 3: 收益构成
-        if (chartBenefit) {
-            var benefitData = [
-                configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit,
-                rdCapacity, cycleTime, complianceTotal
-            ];
-            chartBenefit.data.datasets[0].data = benefitData;
-            chartBenefit.update('none');
-        }
-    } catch(e) {
-        console.error('Chart update error:', e);
-    }
+        if (chartAnnualCF) { chartAnnualCF.data.datasets[0].data = [y1_net, y2_net, y3_net, y4_net, y5_net]; chartAnnualCF.update('none'); }
+        if (chartCumCF) { chartCumCF.data.datasets[0].data = [y1_cum, y2_cum, y3_cum, y4_cum, y5_cum]; chartCumCF.update('none'); }
+        if (chartBenefit) { chartBenefit.data.datasets[0].data = [configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal]; chartBenefit.update('none'); }
+    } catch(e) { console.error('Chart update error:', e); }
 }
 
-// ===== 计算核心 =====
 function calc() {
-    // Read parameters
     const p = {
         laborRate: parseFloat(document.getElementById('p_laborRate').value) || 0,
         bomItems: parseInt(document.getElementById('p_bomItems').value) || 0,
@@ -906,196 +756,114 @@ function calc() {
         newProjCount: parseFloat(document.getElementById('p_newProjCount').value) || 0,
     };
 
-    // ===== F5: BOM错误项数 =====
     const bomErrorItems = Math.round(p.bomItems * p.bomErrorRate);
-
-    // ===== F6: 分阶段BOM错误损失 =====
     const f6_s1 = bomErrorItems * 0.60 * 80 / 10000;
     const f6_s2 = bomErrorItems * 0.25 * 300 / 10000;
     const f6_s3 = bomErrorItems * 0.12 * 1200 / 10000;
     const f6_s4 = bomErrorItems * 0.03 * 3500 / 10000;
     const bomErrorLoss = f6_s1 + f6_s2 + f6_s3 + f6_s4;
 
-    // ===== F1-F4: 构型缺失损失 =====
     const f1 = 3100 * p.laborRate / 10000;
-    const f2 = 70; // fixed
+    const f2 = 70;
     const f3 = 6400 * p.laborRate / 10000;
     const f4 = 1050 * p.laborRate / 10000;
     const configLoss = f1 + f2 + f3 + f4;
-
-    // ===== 构型+BOM总损失 =====
     const configBomLoss = configLoss + bomErrorLoss;
 
-    // ===== F7, F8: 质量损失 (固定) =====
-    const f7 = 72;
-    const f8 = 260;
-    const qualityLoss = f7 + f8;
+    const f7 = 72; const f8 = 260; const qualityLoss = f7 + f8;
 
-    // ===== F9-F11: 变更损失 =====
     const f9 = p.annualChanges * 2 * 3 * p.laborRate / 10000;
     const reworkChanges = p.annualChanges * 0.20;
     const f10 = reworkChanges * (5 * 4 * p.laborRate + 2000) / 10000;
     const f11 = 5 * 9.88;
     const changeLoss = f9 + f10 + f11;
 
-    // ===== F12, F13: 设计重复损失 =====
     const f12 = p.teamSize * 15 * 3.5 * p.laborRate / 10000;
     const f13 = p.teamSize * 15 * 1000 / 10000;
     const designDupLoss = f12 + f13;
-
-    // ===== F14: 总损失 =====
     const totalLoss = configBomLoss + qualityLoss + changeLoss + designDupLoss;
 
-    // ===== Layer 1 Benefits =====
-    const f15 = bomErrorLoss * 0.70;      // BOM错误减少
-    const f16 = configLoss * 0.66;         // 服务构型追溯
-    const f17 = f7 * 0.50;                  // 内部返工减少
-    const f18 = f8 * 0.43;                  // 客户召回减少
-    const f19 = p.annualChanges * 4.5 * p.laborRate / 10000;  // 管理工时节省
-    const f20 = f10 * 0.60;                 // 一般返工减少
-    const f21 = f11 * 0.80;                 // 严重延误减少
-    const f22 = f12 * 0.60;                 // 设计工时节省
-    const f23 = f13 * 0.60;                 // 链式成本减少
+    const f15 = bomErrorLoss * 0.70;
+    const f16 = configLoss * 0.66;
+    const f17 = f7 * 0.50; const f18 = f8 * 0.43;
+    const f19 = p.annualChanges * 4.5 * p.laborRate / 10000;
+    const f20 = f10 * 0.60; const f21 = f11 * 0.80;
+    const f22 = f12 * 0.60; const f23 = f13 * 0.60;
 
     const configBomBenefit = f15 + f16;
     const qualityBenefit = f17 + f18;
     const changeBenefit = f19 + f20 + f21;
     const designDupBenefit = f22 + f23;
-
     const layer1Total = configBomBenefit + qualityBenefit + changeBenefit + designDupBenefit;
 
-    // ===== Layer 2 Benefits =====
-    // 研发产能提升
-    const f25 = p.teamSize * 15 * 2.1;  // hours
-    const f26 = 1750;
-    const f27 = f25 / f26;
+    const f25 = p.teamSize * 15 * 2.1;
+    const f27 = f25 / 1750;
     const f28 = f27 * 0.85 * 0.60;
     const f30 = f28 * 81;
-
-    // 上市周期缩短
-    const cycleShorten = 18 * 0.15; // 2.7
+    const cycleShorten = 18 * 0.15;
     const f32 = p.newProjCount * 2000 * (cycleShorten / 12) * 0.15 * 0.50;
-    const conservativeRatio = 60 / 84.375; // from original
+    const conservativeRatio = 60 / 84.375;
     const f33 = f32 * conservativeRatio;
-
-    // 合规审计
-    const f35 = 240 * p.laborRate / 10000; // 审计直接节省
-    const f36 = 13.1;
-    const complianceTotal = f35 + f36;
-
+    const f35 = 240 * p.laborRate / 10000;
+    const complianceTotal = f35 + 13.1;
     const layer2Total = f30 + f33 + complianceTotal;
 
-    // ===== 年度总收益 =====
     const annualBenefit = layer1Total + layer2Total;
     const monthlyBenefit = annualBenefit / 12;
 
-    // ===== F39: 研发ROI三层 =====
     const r3_l1 = p.teamSize * 15 * 2.1 * p.laborRate / 10000;
     const r3_l2 = p.teamSize * 15 * 0.60 * 1000 / 10000;
     const r3_l3 = f30;
     const r3_total = r3_l1 + r3_l2 + r3_l3;
 
-    // ===== 财务指标 =====
-    const totalInvestment = 535; // 万
-
-    // Monthly cash flow simulation
+    const totalInvestment = 535;
     const m = monthlyBenefit;
     const cashflows = [];
-    // Month 1: -185
     cashflows.push(-185);
-    // Months 2-7: 0
     for (let i = 2; i <= 7; i++) cashflows.push(0);
-    // Month 8: +m - 150
     cashflows.push(m - 150);
-    // Months 9-11: +m
     for (let i = 9; i <= 11; i++) cashflows.push(m);
-    // Month 12: +m
     cashflows.push(m);
-    // Months 13-19: +m
     for (let i = 13; i <= 19; i++) cashflows.push(m);
-    // Month 20: +m - 200
     cashflows.push(m - 200);
-    // Months 21-60: +m
     for (let i = 21; i <= 60; i++) cashflows.push(m);
 
-    // Cumulative
-    let cum = 0;
-    let paybackMonth = null;
+    let cum = 0; let paybackMonth = null;
     for (let i = 0; i < 60; i++) {
         cum += cashflows[i];
         if (paybackMonth === null && cum > 0) {
-            // interpolate
             const prevCum = cum - cashflows[i];
             const frac = -prevCum / cashflows[i];
             paybackMonth = (i + 1) - 1 + frac;
         }
     }
     const fiveYearNCF = cum;
-
-    // ROI
     const roi = (fiveYearNCF / totalInvestment) * 100;
 
-    // NPV
     const annualDiscount = 0.08;
     const monthlyDiscount = Math.pow(1 + annualDiscount, 1/12) - 1;
     let npv = 0;
-    for (let i = 0; i < 60; i++) {
-        npv += cashflows[i] / Math.pow(1 + monthlyDiscount, i + 1);
-    }
+    for (let i = 0; i < 60; i++) { npv += cashflows[i] / Math.pow(1 + monthlyDiscount, i + 1); }
 
-    // Yearly cash flow summary
-    function sumRange(start, end) {
-        let s = 0;
-        for (let i = start; i <= end; i++) s += cashflows[i];
-        return s;
-    }
-    const y1_in = m * 5; // months 8-12 (5 months of revenue in year 1)
-    const y1_out = 185 + 150; // down + acceptance
-    const y1_net = y1_in - y1_out;
-    const y1_cum = y1_net;
-
-    const y2_in = m * 12;
-    const y2_out = 200; // final payment
-    const y2_net = y2_in - y2_out;
-    const y2_cum = y1_cum + y2_net;
-
-    const y3_in = m * 12;
-    const y3_out = 0;
-    const y3_net = y3_in;
-    const y3_cum = y2_cum + y3_net;
-
-    const y4_in = m * 12;
-    const y4_out = 0;
-    const y4_net = y4_in;
-    const y4_cum = y3_cum + y4_net;
-
-    const y5_in = m * 12;
-    const y5_out = 0;
-    const y5_net = y5_in;
-    const y5_cum = y4_cum + y5_net;
-
+    const y1_in = m * 5; const y1_out = 185 + 150; const y1_net = y1_in - y1_out; const y1_cum = y1_net;
+    const y2_in = m * 12; const y2_out = 200; const y2_net = y2_in - y2_out; const y2_cum = y1_cum + y2_net;
+    const y3_in = m * 12; const y3_out = 0; const y3_net = y3_in; const y3_cum = y2_cum + y3_net;
+    const y4_in = m * 12; const y4_out = 0; const y4_net = y4_in; const y4_cum = y3_cum + y4_net;
+    const y5_in = m * 12; const y5_out = 0; const y5_net = y5_in; const y5_cum = y4_cum + y5_net;
     const total_in = y1_in + y2_in + y3_in + y4_in + y5_in;
-    const total_out = y1_out + y2_out;
-    const total_net = total_in - total_out;
-
+    const total_out = y1_out + y2_out; const total_net = total_in - total_out;
     const oppCost = annualBenefit / 12;
 
-    // ===== Helper to format numbers =====
     function fm(v, decimals) {
         if (decimals === undefined) decimals = v < 10 ? 2 : (v < 100 ? 1 : 0);
         return v.toFixed(decimals);
     }
 
-    // ===== UPDATE DISPLAY =====
-    // Helper: set text content
     function set(id, value, suffix) {
         const el = document.getElementById(id);
-        if (el) {
-            el.textContent = (suffix ? value + suffix : value);
-        }
+        if (el) el.textContent = (suffix ? value + suffix : value);
     }
 
-    // Section 1
     set('v_f1_calc', '3,100 × ' + fm(p.laborRate) + ' ÷ 10000');
     set('v_f1', fm(f1, 1) + ' 万');
     set('v_f3_calc', '6,400 × ' + fm(p.laborRate) + ' ÷ 10000');
@@ -1103,158 +871,67 @@ function calc() {
     set('v_f4_calc', '1,050 × ' + fm(p.laborRate) + ' ÷ 10000');
     set('v_f4', fm(f4, 1) + ' 万');
     set('v_configLoss', fm(configLoss, 0) + ' 万');
-
     set('v_f5_items', bomErrorItems);
     set('v_f5', bomErrorItems + ' 个');
-    set('v_f6_s1_items', bomErrorItems);
-    set('v_f6_s2_items', bomErrorItems);
-    set('v_f6_s3_items', bomErrorItems);
-    set('v_f6_s4_items', bomErrorItems);
-    set('v_f6_s1', fm(f6_s1, 1) + ' 万');
-    set('v_f6_s2', fm(f6_s2, 1) + ' 万');
-    set('v_f6_s3', fm(f6_s3, 1) + ' 万');
-    set('v_f6_s4', fm(f6_s4, 1) + ' 万');
+    set('v_f6_s1_items', bomErrorItems); set('v_f6_s2_items', bomErrorItems); set('v_f6_s3_items', bomErrorItems); set('v_f6_s4_items', bomErrorItems);
+    set('v_f6_s1', fm(f6_s1, 1)); set('v_f6_s2', fm(f6_s2, 1)); set('v_f6_s3', fm(f6_s3, 1)); set('v_f6_s4', fm(f6_s4, 1));
     set('v_f6', fm(bomErrorLoss, 0) + ' 万');
     set('v_configBomLoss', fm(configBomLoss, 0) + ' 万');
-
     set('v_f9_calc', fm(p.annualChanges) + ' × 2 × 3 × ' + fm(p.laborRate) + ' ÷ 10000');
     set('v_f9', fm(f9, 0) + ' 万');
-    set('v_f10_rework', fm(reworkChanges, 0));
-    set('v_f10_rework2', fm(reworkChanges, 0));
-    const f10_unit = (5 * 4 * p.laborRate + 2000);
-    set('v_f10_calc', fm(reworkChanges, 0) + ' × ' + fm(f10_unit / 10000, 4) + '万');
+    set('v_f10_rework', fm(reworkChanges, 0)); set('v_f10_rework2', fm(reworkChanges, 0));
+    set('v_f10_calc', fm(reworkChanges, 0) + ' × ' + fm((5 * 4 * p.laborRate + 2000) / 10000, 4) + '万');
     set('v_f10', fm(f10, 0) + ' 万');
     set('v_changeLoss', fm(changeLoss, 0) + ' 万');
-
     set('v_f12_calc', fm(p.teamSize) + ' × 15 × 3.5 × ' + fm(p.laborRate) + ' ÷ 10000');
     set('v_f12', fm(f12, 0) + ' 万');
     set('v_f13_calc', fm(p.teamSize) + ' × 15 × 1000 ÷ 10000');
     set('v_f13', fm(f13, 0) + ' 万');
     set('v_designDupLoss', fm(designDupLoss, 0) + ' 万');
-
     set('v_totalLoss', fm(totalLoss, 0) + ' 万');
 
-    // Section 2
-    set('v_f15_base', fm(bomErrorLoss, 0));
-    set('v_f15_calc', fm(bomErrorLoss, 0) + ' × 70%');
-    set('v_f15', fm(f15, 0) + ' 万');
-    set('v_f16_base', fm(configLoss, 0));
-    set('v_f16_calc', fm(configLoss, 0) + ' × 66%');
-    set('v_f16', fm(f16, 0) + ' 万');
+    set('v_f15_base', fm(bomErrorLoss, 0)); set('v_f15_calc', fm(bomErrorLoss, 0) + ' × 70%'); set('v_f15', fm(f15, 0) + ' 万');
+    set('v_f16_base', fm(configLoss, 0)); set('v_f16_calc', fm(configLoss, 0) + ' × 66%'); set('v_f16', fm(f16, 0) + ' 万');
     set('v_configBomBenefit', fm(configBomBenefit, 0) + ' 万');
-
-    set('v_f19_calc', fm(p.annualChanges) + ' × 4.5 × ' + fm(p.laborRate) + ' ÷ 10000');
-    set('v_f19', fm(f19, 0) + ' 万');
-    set('v_f20_base', fm(f10, 0));
-    set('v_f20_calc', fm(f10, 0) + ' × 60%');
-    set('v_f20', fm(f20, 0) + ' 万');
+    set('v_f19_calc', fm(p.annualChanges) + ' × 4.5 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f19', fm(f19, 0) + ' 万');
+    set('v_f20_base', fm(f10, 0)); set('v_f20_calc', fm(f10, 0) + ' × 60%'); set('v_f20', fm(f20, 0) + ' 万');
     set('v_changeBenefit', fm(changeBenefit, 0) + ' 万');
-
-    set('v_f22_base', fm(f12, 0));
-    set('v_f22_calc', fm(f12, 0) + ' × 60%');
-    set('v_f22', fm(f22, 0) + ' 万');
-    set('v_f23_base', fm(f13, 0));
-    set('v_f23_calc', fm(f13, 0) + ' × 60%');
-    set('v_f23', fm(f23, 0) + ' 万');
+    set('v_f22_base', fm(f12, 0)); set('v_f22_calc', fm(f12, 0) + ' × 60%'); set('v_f22', fm(f22, 0) + ' 万');
+    set('v_f23_base', fm(f13, 0)); set('v_f23_calc', fm(f13, 0) + ' × 60%'); set('v_f23', fm(f23, 0) + ' 万');
     set('v_designDupBenefit', fm(designDupBenefit, 0) + ' 万');
+    set('v_layer1Total', fm(layer1Total, 0) + ' 万'); set('v_layer1Total2', fm(layer1Total, 0) + ' 万');
 
-    set('v_layer1Total', fm(layer1Total, 0) + ' 万');
-    set('v_layer1Total2', fm(layer1Total, 0) + ' 万');
-
-    // Section 3
-    set('v_f25_hours', fm(f25, 0));
-    set('v_f25', fm(f25, 0) + ' h');
-    set('v_f27_hours', fm(f25, 0));
-    set('v_f27_people', fm(f27, 1));
-    set('v_f27', fm(f27, 1) + ' 人');
-    set('v_f28_people', fm(f27, 1));
-    set('v_f28_eff', fm(f28, 2));
-    set('v_f28', fm(f28, 2) + ' 人');
-    set('v_f30_eff', fm(f28, 2));
-    set('v_f30_calc', fm(f28, 2) + ' × 81');
-    set('v_f30', fm(f30, 1) + ' 万');
-
-    set('v_f32_calc', fm(p.newProjCount, 1) + ' × 2000 × 0.225 × 0.15 × 0.5 = ' + fm(p.newProjCount, 1) + ' × 33.75');
-    set('v_f32', fm(f32, 1) + ' 万');
-    set('v_f33_base', fm(f32, 1));
-    set('v_f33_calc', fm(f32, 1) + ' × 0.71');
-    set('v_f33', fm(f33, 1) + ' 万');
-
-    set('v_f35_calc', '240 × ' + fm(p.laborRate) + ' ÷ 10000');
-    set('v_f35', fm(f35, 1) + ' 万');
+    set('v_f25_hours', fm(f25, 0)); set('v_f25', fm(f25, 0) + ' h');
+    set('v_f27_hours', fm(f25, 0)); set('v_f27_people', fm(f27, 1)); set('v_f27', fm(f27, 1) + ' 人');
+    set('v_f28_people', fm(f27, 1)); set('v_f28_eff', fm(f28, 2)); set('v_f28', fm(f28, 2) + ' 人');
+    set('v_f30_eff', fm(f28, 2)); set('v_f30_calc', fm(f28, 2) + ' × 81'); set('v_f30', fm(f30, 1) + ' 万');
+    set('v_f32_calc', fm(p.newProjCount, 1) + ' × 2000 × 0.225 × 0.15 × 0.5 = ' + fm(p.newProjCount, 1) + ' × 33.75'); set('v_f32', fm(f32, 1) + ' 万');
+    set('v_f33_base', fm(f32, 1)); set('v_f33_calc', fm(f32, 1) + ' × 0.71'); set('v_f33', fm(f33, 1) + ' 万');
+    set('v_f35_calc', '240 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f35', fm(f35, 1) + ' 万');
     set('v_complianceTotal', fm(complianceTotal, 1) + ' 万');
+    set('v_layer2Total', fm(layer2Total, 0) + ' 万'); set('v_layer2Total2', fm(layer2Total, 0) + ' 万');
 
-    set('v_layer2Total', fm(layer2Total, 0) + ' 万');
-    set('v_layer2Total2', fm(layer2Total, 0) + ' 万');
+    set('v_r3_l1', fm(r3_l1, 0) + ' 万'); set('v_r3_l2', fm(r3_l2, 0) + ' 万'); set('v_r3_l3_people', fm(f27, 1)); set('v_r3_l3', fm(r3_l3, 0) + ' 万'); set('v_r3_total', fm(r3_total, 0) + ' 万');
 
-    // R3 layers
-    set('v_r3_l1', fm(r3_l1, 0) + ' 万');
-    set('v_r3_l2', fm(r3_l2, 0) + ' 万');
-    set('v_r3_l3_people', fm(f27, 1));
-    set('v_r3_l3', fm(r3_l3, 0) + ' 万');
-    set('v_r3_total', fm(r3_total, 0) + ' 万');
+    set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
+    set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 2) + ' 万/月');
+    set('v_roi', fm(roi, 0) + '%'); set('v_ncf5', fm(fiveYearNCF, 0)); set('v_payback', fm(paybackMonth || 0, 1)); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 1));
 
-    // Section 4
-    set('v_f40_l1', fm(layer1Total, 0));
-    set('v_f40_l2', fm(layer2Total, 0));
-    set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0));
-    set('v_f40', fm(annualBenefit, 0) + ' 万');
+    set('v_cf_y1_in', fm(y1_in, 0) + ' 万'); set('v_cf_y1_net', '+' + fm(y1_net, 0) + ' 万'); set('v_cf_y1_cum', '+' + fm(y1_cum, 0) + ' 万');
+    set('v_cf_y2_in', fm(y2_in, 0) + ' 万'); set('v_cf_y2_out', fm(y2_out, 0) + ' 万'); set('v_cf_y2_net', '+' + fm(y2_net, 0) + ' 万'); set('v_cf_y2_cum', '+' + fm(y2_cum, 0) + ' 万');
+    set('v_cf_y3_in', fm(y3_in, 0) + ' 万'); set('v_cf_y3_net', '+' + fm(y3_net, 0) + ' 万'); set('v_cf_y3_cum', '+' + fm(y3_cum, 0) + ' 万');
+    set('v_cf_y4_in', fm(y4_in, 0) + ' 万'); set('v_cf_y4_net', '+' + fm(y4_net, 0) + ' 万'); set('v_cf_y4_cum', '+' + fm(y4_cum, 0) + ' 万');
+    set('v_cf_y5_in', fm(y5_in, 0) + ' 万'); set('v_cf_y5_net', '+' + fm(y5_net, 0) + ' 万'); set('v_cf_y5_cum', '+' + fm(y5_cum, 0) + ' 万');
+    set('v_cf_total_in', fm(total_in, 0) + ' 万'); set('v_cf_total_out', fm(total_out, 0) + ' 万'); set('v_cf_total_net', '+' + fm(total_net, 0) + ' 万');
 
-    set('v_f41_annual', fm(annualBenefit, 0));
-    set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12');
-    set('v_f41', fm(monthlyBenefit, 2) + ' 万/月');
+    set('s_configBomLoss', fm(configBomLoss, 0)); set('s_configBomBenefit', fm(configBomBenefit, 0)); set('s_configBomTotal', fm(configBomBenefit, 0));
+    set('s_changeLoss', fm(changeLoss, 0)); set('s_changeBenefit', fm(changeBenefit, 0)); set('s_changeTotal', fm(changeBenefit, 0));
+    set('s_designDupLoss', fm(designDupLoss, 0)); set('s_designDupBenefit', fm(designDupBenefit, 0)); set('s_designDupTotal', fm(designDupBenefit, 0));
+    set('s_l1_loss', fm(totalLoss, 0)); set('s_l1_benefit', fm(layer1Total, 0)); set('s_l1_total', fm(layer1Total, 0));
+    set('s_rdCapacity', fm(f30, 0)); set('s_cycleTime', fm(f33, 0)); set('s_compliance', fm(complianceTotal, 0));
+    set('s_l2_benefit', fm(layer2Total, 0)); set('s_l2_total', fm(layer2Total, 0));
+    set('s_total_loss', fm(totalLoss, 0)); set('s_total_benefit', fm(layer1Total, 0)); set('s_total_incremental', fm(layer2Total, 0)); set('s_grand_total', fm(annualBenefit, 0) + ' 万');
 
-    set('v_roi', fm(roi, 0) + '%');
-    set('v_ncf5', fm(fiveYearNCF, 0));
-    set('v_payback', fm(paybackMonth || 0, 1));
-    set('v_npv', fm(npv, 0));
-    set('v_oppCost', fm(oppCost, 1));
-
-    // Cashflow table
-    set('v_cf_y1_in', fm(y1_in, 0) + ' 万');
-    set('v_cf_y1_net', '+' + fm(y1_net, 0) + ' 万');
-    set('v_cf_y1_cum', '+' + fm(y1_cum, 0) + ' 万');
-    set('v_cf_y2_in', fm(y2_in, 0) + ' 万');
-    set('v_cf_y2_out', fm(y2_out, 0) + ' 万');
-    set('v_cf_y2_net', '+' + fm(y2_net, 0) + ' 万');
-    set('v_cf_y2_cum', '+' + fm(y2_cum, 0) + ' 万');
-    set('v_cf_y3_in', fm(y3_in, 0) + ' 万');
-    set('v_cf_y3_net', '+' + fm(y3_net, 0) + ' 万');
-    set('v_cf_y3_cum', '+' + fm(y3_cum, 0) + ' 万');
-    set('v_cf_y4_in', fm(y4_in, 0) + ' 万');
-    set('v_cf_y4_net', '+' + fm(y4_net, 0) + ' 万');
-    set('v_cf_y4_cum', '+' + fm(y4_cum, 0) + ' 万');
-    set('v_cf_y5_in', fm(y5_in, 0) + ' 万');
-    set('v_cf_y5_net', '+' + fm(y5_net, 0) + ' 万');
-    set('v_cf_y5_cum', '+' + fm(y5_cum, 0) + ' 万');
-    set('v_cf_total_in', fm(total_in, 0) + ' 万');
-    set('v_cf_total_out', fm(total_out, 0) + ' 万');
-    set('v_cf_total_net', '+' + fm(total_net, 0) + ' 万');
-
-    // Summary table
-    set('s_configBomLoss', fm(configBomLoss, 0));
-    set('s_configBomBenefit', fm(configBomBenefit, 0));
-    set('s_configBomTotal', fm(configBomBenefit, 0));
-    set('s_changeLoss', fm(changeLoss, 0));
-    set('s_changeBenefit', fm(changeBenefit, 0));
-    set('s_changeTotal', fm(changeBenefit, 0));
-    set('s_designDupLoss', fm(designDupLoss, 0));
-    set('s_designDupBenefit', fm(designDupBenefit, 0));
-    set('s_designDupTotal', fm(designDupBenefit, 0));
-    set('s_l1_loss', fm(totalLoss, 0));
-    set('s_l1_benefit', fm(layer1Total, 0));
-    set('s_l1_total', fm(layer1Total, 0));
-    set('s_rdCapacity', fm(f30, 0));
-    set('s_cycleTime', fm(f33, 0));
-    set('s_compliance', fm(complianceTotal, 0));
-    set('s_l2_benefit', fm(layer2Total, 0));
-    set('s_l2_total', fm(layer2Total, 0));
-    set('s_total_loss', fm(totalLoss, 0));
-    set('s_total_benefit', fm(layer1Total, 0));
-    set('s_total_incremental', fm(layer2Total, 0));
-    set('s_grand_total', fm(annualBenefit, 0) + ' 万');
-
-    // Update parameter highlights in formulas
     document.querySelectorAll('.h_laborRate').forEach(el => el.textContent = fm(p.laborRate, 1));
     document.querySelectorAll('.h_bomItems').forEach(el => el.textContent = p.bomItems.toLocaleString());
     document.querySelectorAll('.h_bomErrorRate').forEach(el => el.textContent = fm(p.bomErrorRate * 100, 1) + '%');
@@ -1262,28 +939,16 @@ function calc() {
     document.querySelectorAll('.h_teamSize').forEach(el => el.textContent = p.teamSize);
     document.querySelectorAll('.h_newProjCount').forEach(el => el.textContent = fm(p.newProjCount, 1));
 
-    // Update charts
-    updateCharts(layer1Total, layer2Total, annualBenefit,
-        configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit,
-        f30, f33, complianceTotal,
-        y1_net, y2_net, y3_net, y4_net, y5_net,
-        y1_cum, y2_cum, y3_cum, y4_cum, y5_cum);
+    updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, f30, f33, complianceTotal, y1_net, y2_net, y3_net, y4_net, y5_net, y1_cum, y2_cum, y3_cum, y4_cum, y5_cum);
 }
 
-// ===== Event Handlers =====
 function onParamChange() {
     calc();
-    // Highlight changed inputs
     document.querySelectorAll('.param-item input').forEach(inp => {
-        const id = inp.id;
-        const key = id.replace('p_', '');
+        const key = inp.id.replace('p_', '');
         let defVal = defaults[key];
-        if (key === 'bomErrorRate') defVal = defaults[key];
-        if (parseFloat(inp.value) !== defVal) {
-            inp.classList.add('changed');
-        } else {
-            inp.classList.remove('changed');
-        }
+        if (parseFloat(inp.value) !== defVal) inp.classList.add('changed');
+        else inp.classList.remove('changed');
     });
 }
 
@@ -1298,20 +963,11 @@ function resetParams() {
     calc();
 }
 
-function toggleSection(titleEl) {
-    titleEl.classList.toggle('collapsed');
-}
+function toggleSection(titleEl) { titleEl.classList.toggle('collapsed'); }
 
-// ===== Initial Calculation =====
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        initCharts();
-        calc();
-    });
-} else {
-    initCharts();
-    calc();
-}
+    document.addEventListener('DOMContentLoaded', function() { initCharts(); calc(); });
+} else { initCharts(); calc(); }
 </script>
 </body>
 </html>
