@@ -205,7 +205,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
   .quick-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;z-index:200;padding:6px 0;box-shadow:0 -2px 10px rgba(0,0,0,0.2);}
   .quick-nav a{flex:1;text-align:center;color:#a0a8c0;font-size:11px;padding:6px 0;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:color 0.2s;}
   .quick-nav a.active,.quick-nav a:hover{color:#00a8ff;}
-  .quick-nav a .nav-icon{font-size:16px;display:block;margin-bottom:2px;}
+  .quick-nav a .nav-icon{display:block;margin:0 auto 3px;width:20px;height:20px;}
+  .quick-nav a .nav-icon svg{width:100%;height:100%;display:block;}
+  .inline-ic{display:inline-block;vertical-align:-2px;width:14px;height:14px;margin-right:3px;}
+  .inline-ic svg{width:100%;height:100%;display:block;}
   body{padding-bottom:50px;}
 }
 </style>
@@ -213,18 +216,18 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 <body>
 
 <div class="quick-nav" id="quickNav">
-  <a href="#paramPanel" class="active"><span class="nav-icon">📐</span>参数</a>
-  <a href="#sec1"><span class="nav-icon">📉</span>损失</a>
-  <a href="#sec2"><span class="nav-icon">📈</span>收益1</a>
-  <a href="#sec3"><span class="nav-icon">🚀</span>收益2</a>
-  <a href="#sec4"><span class="nav-icon">💰</span>投资</a>
+  <a href="#paramPanel" class="active"><span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5h12M2 8h12M2 11.5h12"/><circle cx="5.5" cy="4.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="10.5" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="11.5" r="1.5" fill="currentColor" stroke="none"/></svg></span>参数</a>
+  <a href="#sec1"><span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,5 6.5,8.5 10,9.5 13.5,12.5"/><circle cx="13.5" cy="12.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>损失</a>
+  <a href="#sec2"><span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,12.5 6.5,9.5 10,8.5 13.5,4.5"/><circle cx="13.5" cy="4.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>收益1</a>
+  <a href="#sec3"><span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="9" width="2.6" height="4.5" rx="1"/><rect x="6.7" y="6.5" width="2.6" height="7" rx="1"/><rect x="10.4" y="3.5" width="2.6" height="10" rx="1"/></svg></span>收益2</a>
+  <a href="#sec4"><span class="nav-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.2"/><path d="M5.8 5.2 8 8l2.2-2.8"/><path d="M8 8v4"/><path d="M6.3 9.5h3.4M6.3 11.5h3.4"/></svg></span>投资</a>
 </div>
 
 <div class="container">
 
 <div class="param-panel" id="paramPanel">
   <button class="param-toggle" id="paramToggle" onclick="toggleParamPanel()">展开参数面板</button>
-  <h2>📐 基础常量与参数 <span style="font-size:10px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
+  <h2><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5h12M2 8h12M2 11.5h12"/><circle cx="5.5" cy="4.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="10.5" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="11.5" r="1.5" fill="currentColor" stroke="none"/></svg></span>基础常量与参数 <span style="font-size:10px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
   <div class="subtitle">以下7个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
   <div class="tco-checkbox-wrap" onclick="toggleTCOMode()">
     <input type="checkbox" id="chk_tcoMode" checked>
@@ -269,17 +272,17 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 <div class="param-summary" id="paramSummary">
   <div class="summary-row">
     <div class="summary-item summary-loss">
-      <div class="summary-label">📉 年度损失</div>
+      <div class="summary-label"><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,5 6.5,8.5 10,9.5 13.5,12.5"/><circle cx="13.5" cy="12.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>年度损失</div>
       <div class="summary-value" id="qs_totalLoss">—</div>
       <div class="summary-unit">万元</div>
     </div>
     <div class="summary-item summary-benefit1">
-      <div class="summary-label">📈 收益1·损失减少</div>
+      <div class="summary-label"><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,12.5 6.5,9.5 10,8.5 13.5,4.5"/><circle cx="13.5" cy="4.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>收益1·损失减少</div>
       <div class="summary-value" id="qs_layer1Total">—</div>
       <div class="summary-unit">万元</div>
     </div>
     <div class="summary-item summary-benefit2">
-      <div class="summary-label">🚀 收益2·增量收益</div>
+      <div class="summary-label"><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="9" width="2.6" height="4.5" rx="1"/><rect x="6.7" y="6.5" width="2.6" height="7" rx="1"/><rect x="10.4" y="3.5" width="2.6" height="10" rx="1"/></svg></span>收益2·增量收益</div>
       <div class="summary-value" id="qs_layer2Total">—</div>
       <div class="summary-unit">万元</div>
     </div>
@@ -544,7 +547,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     </div>
     <div class="charts-grid">
       <div class="chart-card"><h4>📊 五年年度净现金流</h4><div class="chart-wrap"><canvas id="chartAnnualCF"></canvas></div></div>
-      <div class="chart-card"><h4>📈 五年累计净现金流趋势</h4><div class="chart-wrap"><canvas id="chartCumCF"></canvas></div></div>
+      <div class="chart-card"><h4><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,12.5 6.5,9.5 10,8.5 13.5,4.5"/><circle cx="13.5" cy="4.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>五年累计净现金流趋势</h4><div class="chart-wrap"><canvas id="chartCumCF"></canvas></div></div>
       <div class="chart-card chart-card-full"><h4>🍩 年度总收益构成</h4><div class="chart-wrap"><canvas id="chartBenefit"></canvas></div></div>
     </div>
     <div class="card">
