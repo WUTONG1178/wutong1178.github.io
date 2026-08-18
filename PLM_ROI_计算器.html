@@ -121,7 +121,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 <!-- ===== 参数面板 ===== -->
 <div class="param-panel" id="paramPanel">
   <h2>基础常量与参数 <span style="font-size:11px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
-  <div class="subtitle">以下6个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
+  <div class="subtitle">以下7个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
   <div class="param-grid">
     <div class="param-item">
       <label>工时费率 <span class="unit">元/人时</span></label>
@@ -146,6 +146,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     <div class="param-item">
       <label>增量新项目预测 <span class="unit">个/年</span></label>
       <input type="number" id="p_newProjCount" value="2.5" step="0.1" min="0" oninput="onParamChange()">
+    </div>
+    <div class="param-item">
+      <label>NPV折现率 <span class="unit">%</span></label>
+      <input type="number" id="p_discountRate" value="8" step="0.5" min="0" max="50" oninput="onParamChange()">
     </div>
   </div>
   <div class="param-reset">
@@ -528,7 +532,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
           <div class="fin-unit">个月</div>
         </div>
         <div class="fin-card">
-          <div class="fin-label">F47 净现值 NPV@8%</div>
+          <div class="fin-label" id="lbl_npv">F47 净现值 NPV@8%</div>
           <div class="fin-value" style="color:#6c5ce7;" id="v_npv">—</div>
           <div class="fin-unit">万</div>
         </div>
@@ -671,6 +675,7 @@ const defaults = {
     annualChanges: 1200,
     teamSize: 110,
     newProjCount: 2.5,
+    discountRate: 8,
 };
 
 // ===== Chart instances =====
@@ -731,6 +736,7 @@ function calc() {
         annualChanges: parseInt(document.getElementById('p_annualChanges').value) || 0,
         teamSize: parseInt(document.getElementById('p_teamSize').value) || 0,
         newProjCount: parseFloat(document.getElementById('p_newProjCount').value) || 0,
+        discountRate: parseFloat(document.getElementById('p_discountRate').value) / 100 || 0,
     };
 
     const bomErrorItems = Math.round(p.bomItems * p.bomErrorRate);
@@ -812,7 +818,7 @@ function calc() {
     const fiveYearNCF = cum;
     const roi = (fiveYearNCF / totalInvestment) * 100;
 
-    const annualDiscount = 0.08;
+    const annualDiscount = p.discountRate;
     const monthlyDiscount = Math.pow(1 + annualDiscount, 1/12) - 1;
     let npv = 0;
     for (let i = 0; i < 60; i++) { npv += cashflows[i] / Math.pow(1 + monthlyDiscount, i + 1); }
@@ -887,6 +893,7 @@ function calc() {
     set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
     set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 0) + ' 万/月');
     set('v_roi', fm(roi, 1) + '%'); set('v_ncf5', fm(fiveYearNCF, 0)); set('v_payback', fm(paybackMonth || 0, 1)); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 0));
+    set('lbl_npv', 'F47 净现值 NPV@' + fm(p.discountRate * 100, 1) + '%');
 
     set('v_cf_y1_in', fm(y1_in, 0) + ' 万'); set('v_cf_y1_net', '+' + fm(y1_net, 0) + ' 万'); set('v_cf_y1_cum', '+' + fm(y1_cum, 0) + ' 万');
     set('v_cf_y2_in', fm(y2_in, 0) + ' 万'); set('v_cf_y2_out', fm(y2_out, 0) + ' 万'); set('v_cf_y2_net', '+' + fm(y2_net, 0) + ' 万'); set('v_cf_y2_cum', '+' + fm(y2_cum, 0) + ' 万');
@@ -930,6 +937,7 @@ function resetParams() {
     document.getElementById('p_annualChanges').value = defaults.annualChanges;
     document.getElementById('p_teamSize').value = defaults.teamSize;
     document.getElementById('p_newProjCount').value = defaults.newProjCount;
+    document.getElementById('p_discountRate').value = defaults.discountRate;
     document.querySelectorAll('.param-item input').forEach(inp => inp.classList.remove('changed'));
     calc();
 }
