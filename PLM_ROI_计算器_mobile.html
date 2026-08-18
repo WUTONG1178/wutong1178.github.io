@@ -259,7 +259,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     </div>
     <div class="param-item" id="paramItem_annualMaint">
       <label>年运维费用 <span class="unit">万/年</span></label>
-      <input type="number" id="p_annualMaint" value="20" step="1" min="0" oninput="onParamChange()">
+      <input type="number" id="p_annualMaint" value="40" step="1" min="0" oninput="onParamChange()">
     </div>
     <div class="param-item">
       <label>NPV折现率 <span class="unit">%</span></label>
@@ -531,7 +531,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <div class="formula-row"><span class="f-id">F42a</span><span class="f-label">软件采购</span><span class="f-formula">第1月首付185万 + 第9月验收150万 + 第21月新增投资200万</span><span class="f-result loss" id="v_tco_software">535 万</span></div>
       <div class="formula-row tco-only-row" id="row_tco_infra"><span class="f-id">F42b</span><span class="f-label">基础设施</span><span class="f-formula">服务器/云资源 + 网络与安全设施</span><span class="f-result loss" id="v_tco_infra">100 万</span></div>
       <div class="formula-row tco-only-row" id="row_tco_personnel"><span class="f-id">F42c</span><span class="f-label">人员成本</span><span class="f-formula">内部项目团队人力 + 培训费用</span><span class="f-result loss" id="v_tco_personnel">50 万</span></div>
-      <div class="formula-row tco-only-row" id="row_tco_maint"><span class="f-id">F42d</span><span class="f-label">运维费用（5年）</span><span class="f-formula"><span class="h_annualMaint">20</span> 万/年 × 5年</span><span class="f-result loss" id="v_tco_maint">400 万</span></div>
+      <div class="formula-row tco-only-row" id="row_tco_maint"><span class="f-id">F42d</span><span class="f-label">运维费用（5年）</span><span class="f-formula"><span class="h_annualMaint">40</span> 万/年 × 5年</span><span class="f-result loss" id="v_tco_maint">200 万</span></div>
       <div class="total-row" style="border:2px solid #e17055;background:#fff5f5;" id="row_tco_total">
         <span class="total-label" id="v_tco_total_label">📊 TCO 五年总体拥有成本</span>
         <span class="total-val loss" id="v_tco_total" style="font-size:20px;">—</span>
@@ -613,7 +613,7 @@ window._domReady = false;
 document.addEventListener('DOMContentLoaded', function() { window._domReady = true; });
 
 const defaults = {
-    laborRate: 77.6, bomItems: 72000, bomErrorRate: 10, annualChanges: 1200, teamSize: 110, newProjCount: 2.5, annualMaint: 20, discountRate: 8
+    laborRate: 77.6, bomItems: 72000, bomErrorRate: 10, annualChanges: 1200, teamSize: 110, newProjCount: 2.5, annualMaint: 40, discountRate: 8
 };
 
 const _prevQSValues = {};
