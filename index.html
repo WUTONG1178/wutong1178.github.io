@@ -9,12 +9,12 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #02040a;
-      --bg-secondary: #0b1021;
+      --bg: #000028;
+      --bg-secondary: #050540;
       --text: #f0f0f0;
       --text-secondary: #a0aec0;
       --text-tertiary: #64748b;
-      --border: #1e293b;
+      --border: #1b1b55;
       --accent: #009999;
       --accent-hover: #00b5b5;
       --shadow-hover: 0 12px 40px rgba(0,153,153,0.15);
@@ -51,7 +51,7 @@
       top: 0;
       width: 100%;
       z-index: 100;
-      background: rgba(2,4,10,0.85);
+      background: rgba(0,0,40,0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -140,6 +140,114 @@
       align-items: center;
       justify-content: center;
       animation: mediaIn 1s ease 0.2s both;
+      isolation: isolate;
+    }
+
+    /* 呼吸青色光晕（垫在图片后面，与深藏青背景融合） */
+    .hero-media::before {
+      content: '';
+      position: absolute;
+      width: 88%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(0,153,153,0.28) 0%,
+        rgba(0,153,153,0.10) 45%,
+        transparent 70%);
+      filter: blur(10px);
+      z-index: -1;
+      animation: glowPulse 5s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.07); }
+    }
+
+    /* 缓慢旋转的虚线光环 */
+    .hero-ring {
+      position: absolute;
+      width: 92%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px dashed rgba(0,181,181,0.35);
+      z-index: 0;
+      pointer-events: none;
+      animation: ringSpin 60s linear infinite;
+    }
+
+    .hero-ring::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px 2px rgba(0,181,181,0.8);
+    }
+
+    @keyframes ringSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 第二圈反向旋转的暗光环 */
+    .hero-ring-2 {
+      position: absolute;
+      width: 102%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px solid rgba(0,153,153,0.12);
+      z-index: 0;
+      pointer-events: none;
+      animation: ringSpinRev 90s linear infinite;
+    }
+
+    .hero-ring-2::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 18%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(0,181,181,0.7);
+      box-shadow: 0 0 8px 1px rgba(0,181,181,0.5);
+    }
+
+    @keyframes ringSpinRev {
+      to { transform: rotate(-360deg); }
+    }
+
+    /* 环绕漂浮的小光点 */
+    .hero-dots {
+      position: absolute;
+      inset: -6%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-dots span {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(0,181,181,0.65);
+      box-shadow: 0 0 8px rgba(0,181,181,0.6);
+      animation: dotFloat 7s ease-in-out infinite;
+    }
+
+    .hero-dots span:nth-child(1) { top: 12%; left: 8%; animation-delay: 0s; }
+    .hero-dots span:nth-child(2) { top: 22%; right: 10%; width: 4px; height: 4px; animation-delay: 1.5s; }
+    .hero-dots span:nth-child(3) { bottom: 18%; left: 14%; width: 3px; height: 3px; animation-delay: 3s; }
+    .hero-dots span:nth-child(4) { bottom: 10%; right: 18%; animation-delay: 4.2s; }
+    .hero-dots span:nth-child(5) { top: 45%; left: 2%; width: 4px; height: 4px; animation-delay: 2.2s; }
+    .hero-dots span:nth-child(6) { top: 55%; right: 3%; width: 3px; height: 3px; animation-delay: 5s; }
+
+    @keyframes dotFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.35; }
+      50% { transform: translateY(-16px); opacity: 1; }
     }
 
     .hero-media img {
@@ -150,6 +258,8 @@
       display: block;
       transform: scale(1);
       animation: slowZoom 16s ease-in-out infinite alternate;
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes slowZoom {
@@ -394,6 +504,11 @@
   <!-- HERO：左图右文 -->
   <div class="hero" id="hero">
     <div class="hero-media">
+      <div class="hero-ring"></div>
+      <div class="hero-ring-2"></div>
+      <div class="hero-dots">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
       <img src="assets/cover.png" alt="Siemens Xcelerator">
     </div>
     <div class="hero-content">
