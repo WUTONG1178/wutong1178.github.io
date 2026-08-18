@@ -475,35 +475,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <span class="total-val" style="color:#6c5ce7;font-size:22px;" id="v_layer2Total2">—</span>
     </div>
 
-    <!-- 研发ROI三层模型 -->
-    <div class="card" style="margin-top:12px;border-left:4px solid #6c5ce7;">
-      <h3>3.5 研发ROI量化三层模型 <span class="badge badge-purple">F39</span></h3>
-      <table class="summary-table">
-        <tr><th>层次</th><th>量化方式</th><th>计算公式</th><th>年度收益</th></tr>
-        <tr>
-          <td>第一层：工时节省</td>
-          <td>搜索时间+设计时间减少</td>
-          <td style="font-family:monospace;font-size:11px;"><b class="h_teamSize">110</b>人 × 15次 × 2.1h × <b class="h_laborRate">77.6</b></td>
-          <td class="td-benefit" id="v_r3_l1">—</td>
-        </tr>
-        <tr>
-          <td>第二层：链式成本避免</td>
-          <td>复用现有零件号避免新增成本</td>
-          <td style="font-family:monospace;font-size:11px;"><b class="h_teamSize">110</b>人 × 15次 × 60% × 1,000元</td>
-          <td class="td-benefit" id="v_r3_l2">—</td>
-        </tr>
-        <tr>
-          <td>第三层：产能转化收益</td>
-          <td>节省工时→新项目产出</td>
-          <td style="font-family:monospace;font-size:11px;">=<span id="v_r3_l3_people"></span>人等效 × 51% × 81万</td>
-          <td class="td-benefit" id="v_r3_l3">—</td>
-        </tr>
-        <tr class="td-total">
-          <td>研发ROI合计</td><td>—</td><td>F39 = L1 + L2 + L3</td>
-          <td class="td-benefit" id="v_r3_total" style="font-size:15px;">—</td>
-        </tr>
-      </table>
-    </div>
   </div>
 </div>
 
@@ -811,11 +782,6 @@ function calc() {
     const annualBenefit = layer1Total + layer2Total;
     const monthlyBenefit = annualBenefit / 12;
 
-    const r3_l1 = p.teamSize * 15 * 2.1 * p.laborRate / 10000;
-    const r3_l2 = p.teamSize * 15 * 0.60 * 1000 / 10000;
-    const r3_l3 = f30;
-    const r3_total = r3_l1 + r3_l2 + r3_l3;
-
     const totalInvestment = 535;
     const m = monthlyBenefit;
     const cashflows = [];
@@ -911,8 +877,6 @@ function calc() {
     set('v_f35_calc', '240 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f35', fm(f35, 0) + ' 万');
     set('v_complianceTotal', fm(complianceTotal, 0) + ' 万');
     set('v_layer2Total', fm(layer2Total, 0) + ' 万'); set('v_layer2Total2', fm(layer2Total, 0) + ' 万');
-
-    set('v_r3_l1', fm(r3_l1, 0) + ' 万'); set('v_r3_l2', fm(r3_l2, 0) + ' 万'); set('v_r3_l3_people', fm(f27, 1)); set('v_r3_l3', fm(r3_l3, 0) + ' 万'); set('v_r3_total', fm(r3_total, 0) + ' 万');
 
     set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
     set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 0) + ' 万/月');
