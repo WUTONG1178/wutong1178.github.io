@@ -175,7 +175,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <div class="formula-row">
         <span class="f-id">F2</span><span class="f-label">备件错发/错换损失</span>
         <span class="f-formula">(15~20次/年) × 4万/次 ≈ 中值</span>
-        <span class="f-result loss">70.0 万</span>
+        <span class="f-result loss">70 万</span>
       </div>
 
       <div class="formula-row">
@@ -226,16 +226,16 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <div class="formula-row">
         <span class="f-id">F7</span><span class="f-label">内部返工损失（固定值）</span>
         <span class="f-formula">3.6万/次 × 20次/年</span>
-        <span class="f-result loss">72.0 万</span>
+        <span class="f-result loss">72 万</span>
       </div>
       <div class="formula-row">
         <span class="f-id">F8</span><span class="f-label">客户召回损失（固定值）</span>
         <span class="f-formula">260万/次 × 1次/年</span>
-        <span class="f-result loss">260.0 万</span>
+        <span class="f-result loss">260 万</span>
       </div>
       <div class="total-row">
         <span class="total-label">▶ 质量缺陷返工合计</span>
-        <span class="total-val loss">332.0 万</span>
+        <span class="total-val loss">332 万</span>
       </div>
     </div>
 
@@ -322,7 +322,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <div class="formula-row">
         <span class="f-id">F17</span><span class="f-label">内部返工减少收益</span>
         <span class="f-formula">72万 × 改善率50%</span>
-        <span class="f-result benefit">36.0 万</span>
+        <span class="f-result benefit">36 万</span>
       </div>
       <div class="formula-row">
         <span class="f-id">F18</span><span class="f-label">客户召回减少收益</span>
@@ -507,7 +507,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <div class="formula-row">
         <span class="f-id">F42</span><span class="f-label">项目总投入（固定）</span>
         <span class="f-formula">首付185万 + 验收150万 + 尾款200万</span>
-        <span class="f-result loss">535.0 万</span>
+        <span class="f-result loss">535 万</span>
       </div>
     </div>
 
@@ -602,7 +602,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         </tr>
         <tr>
           <td class="td-name">质量损失</td>
-          <td class="td-loss">332.0</td>
+          <td class="td-loss">332</td>
           <td class="td-rate">45%</td>
           <td class="td-benefit">148.7</td><td>—</td>
           <td class="td-benefit">148.7</td>
@@ -680,6 +680,12 @@ let chartAnnualCF = null;
 let chartCumCF = null;
 let chartBenefit = null;
 
+// 全局数字格式化：保留1位小数、四舍五入；小数部分为0时显示整数
+function fmt1(v) {
+    const r = Math.round((v + Number.EPSILON) * 10) / 10;
+    return Number.isInteger(r) ? String(r) : r.toFixed(1);
+}
+
 function initCharts() {
     if (typeof Chart === 'undefined') { setTimeout(initCharts, 200); return; }
     try {
@@ -690,7 +696,7 @@ function initCharts() {
         chartAnnualCF = new Chart(ctx1, {
             type: 'bar',
             data: { labels: ['第1年', '第2年', '第3年', '第4年', '第5年'], datasets: [{ label: '年度净现金流 (万元)', data: [19, 650, 850, 850, 850], backgroundColor: ['#fab1a0', '#00b894', '#00b894', '#00b894', '#00b894'], borderColor: ['#e17055', '#00b894', '#00b894', '#00b894', '#00b894'], borderWidth: 1, borderRadius: 6, barThickness: 36 }] },
-            options: { ...commonOptions, scales: { y: { beginAtZero: true, ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(1) + ' 万元' } } } }
+            options: { ...commonOptions, scales: { y: { beginAtZero: true, ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + fmt1(ctx.raw) + ' 万元' } } } }
         });
         const ctx2 = document.getElementById('chartCumCF');
         if (!ctx2) return;
@@ -698,7 +704,7 @@ function initCharts() {
         chartCumCF = new Chart(ctx2, {
             type: 'line',
             data: { labels: ['第1年', '第2年', '第3年', '第4年', '第5年'], datasets: [{ label: '累计净现金流', data: [19, 669, 1519, 2369, 3219], borderColor: '#0984e3', backgroundColor: 'rgba(9,132,227,0.08)', borderWidth: 2.5, pointBackgroundColor: '#0984e3', pointRadius: 5, pointHoverRadius: 7, tension: 0.3, fill: true }] },
-            options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(1) + ' 万元' } } } }
+            options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + fmt1(ctx.raw) + ' 万元' } } } }
         });
         const ctx3 = document.getElementById('chartBenefit');
         if (!ctx3) return;
@@ -706,7 +712,7 @@ function initCharts() {
         chartBenefit = new Chart(ctx3, {
             type: 'doughnut',
             data: { labels: ['构型+BOM', '工程变更', '质量损失', '设计协同', '研发产能', '上市周期', '合规审计'], datasets: [{ data: [287, 133, 149, 126, 80, 60, 15], backgroundColor: ['#0984e3', '#6c5ce7', '#e17055', '#00b894', '#fdcb6e', '#e84393', '#636e72'], borderColor: '#fff', borderWidth: 2, hoverBorderWidth: 3 }] },
-            options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'right', labels: { font: { size: 10, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: 10 } }, tooltip: { callbacks: { label: function(ctx) { var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0); return ctx.label + ': ' + ctx.raw.toFixed(1) + ' 万元 (' + (ctx.raw / total * 100).toFixed(1) + '%)'; } } } } }
+            options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'right', labels: { font: { size: 10, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: 10 } }, tooltip: { callbacks: { label: function(ctx) { var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0); return ctx.label + ': ' + fmt1(ctx.raw) + ' 万元 (' + fmt1(ctx.raw / total * 100) + '%)'; } } } } }
         });
     } catch(e) { console.error('Chart init error:', e); }
 }
@@ -823,8 +829,9 @@ function calc() {
     const oppCost = annualBenefit / 12;
 
     function fm(v, decimals) {
-        // 所有计算结果统一保留到小数点后一位，四舍五入
-        return (Math.round((v + Number.EPSILON) * 10) / 10).toFixed(1);
+        // 保留到小数点后一位、四舍五入；小数部分为0时直接显示整数
+        var r = Math.round((v + Number.EPSILON) * 10) / 10;
+        return Number.isInteger(r) ? String(r) : r.toFixed(1);
     }
 
     function set(id, value, suffix) {
