@@ -624,13 +624,13 @@ const defaults = {
 };
 
 const _prevQSValues = {};
-function animateQSValue(id, newValue, suffix) {
+function animateQSValue(id, newValue, suffix, decimals) {
     const el = document.getElementById(id);
     if (!el) return;
     const prev = _prevQSValues[id];
     _prevQSValues[id] = newValue;
-    if (prev === undefined || prev === null) { el.textContent = fmtQS(newValue) + (suffix || ''); return; }
-    if (Math.abs(prev - newValue) < 0.01) { el.textContent = fmtQS(newValue) + (suffix || ''); return; }
+    if (prev === undefined || prev === null) { el.textContent = fmtQS(newValue, decimals) + (suffix || ''); return; }
+    if (Math.abs(prev - newValue) < 0.01) { el.textContent = fmtQS(newValue, decimals) + (suffix || ''); return; }
     const duration = 600, startTime = performance.now(), diff = newValue - prev;
     el.classList.add('value-changing');
     setTimeout(function() { el.classList.remove('value-changing'); }, duration);
@@ -639,15 +639,16 @@ function animateQSValue(id, newValue, suffix) {
         const progress = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
         const current = prev + diff * eased;
-        el.textContent = fmtQS(current) + (suffix || '');
+        el.textContent = fmtQS(current, decimals) + (suffix || '');
         if (progress < 1) requestAnimationFrame(step);
-        else el.textContent = fmtQS(newValue) + (suffix || '');
+        else el.textContent = fmtQS(newValue, decimals) + (suffix || '');
     }
     requestAnimationFrame(step);
 }
 
-function fmtQS(v) {
-    // 所有计算精确到小数点后一位，四舍五入
+function fmtQS(v, decimals) {
+    // decimals=0：万元位结果四舍五入取整，不保留小数点；其它：精确到小数点后一位
+    if (decimals === 0) return Math.round(v).toString();
     return (Math.round((v + Number.EPSILON) * 10) / 10).toFixed(1);
 }
 
@@ -695,7 +696,7 @@ function initCharts() {
         chartAnnualCF = new Chart(ctx1, {
             type: 'bar',
             data: { labels: ['第1年', '第2年', '第3年', '第4年', '第5年'], datasets: [{ label: '年度净现金流 (万元)', data: [19, 650, 850, 850, 850], backgroundColor: ['#fab1a0', '#00b894', '#00b894', '#00b894', '#00b894'], borderColor: ['#e17055', '#00b894', '#00b894', '#00b894', '#00b894'], borderWidth: 1, borderRadius: 6, barThickness: isMobile ? 24 : 36 }] },
-            options: { ...commonOptions, scales: { y: { beginAtZero: true, ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(1) + ' 万元' } } } }
+            options: { ...commonOptions, scales: { y: { beginAtZero: true, ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(0) + ' 万元' } } } }
         });
 
         const ctx2 = document.getElementById('chartCumCF');
@@ -704,7 +705,7 @@ function initCharts() {
         chartCumCF = new Chart(ctx2, {
             type: 'line',
             data: { labels: ['第1年', '第2年', '第3年', '第4年', '第5年'], datasets: [{ label: '累计净现金流', data: [19, 669, 1519, 2369, 3219], borderColor: '#0984e3', backgroundColor: 'rgba(9,132,227,0.08)', borderWidth: 2.5, pointBackgroundColor: '#0984e3', pointRadius: isMobile ? 4 : 5, pointHoverRadius: isMobile ? 6 : 7, tension: 0.3, fill: true }] },
-            options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(1) + ' 万元' } } } }
+            options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(0) + ' 万元' } } } }
         });
 
         const ctx3 = document.getElementById('chartBenefit');
@@ -713,7 +714,7 @@ function initCharts() {
         chartBenefit = new Chart(ctx3, {
             type: 'doughnut',
             data: { labels: ['构型+BOM', '工程变更', '质量损失', '设计协同', '研发产能', '上市周期', '合规审计'], datasets: [{ data: [287, 133, 149, 126, 80, 60, 15], backgroundColor: ['#0984e3', '#6c5ce7', '#e17055', '#00b894', '#fdcb6e', '#e84393', '#636e72'], borderColor: '#fff', borderWidth: 2, hoverBorderWidth: 3 }] },
-            options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: isMobile ? 'bottom' : 'right', labels: { font: { size: isMobile ? 10 : 10, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: isMobile ? 8 : 10 } }, tooltip: { callbacks: { label: function(ctx) { var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0); return ctx.label + ': ' + ctx.raw.toFixed(1) + ' 万元 (' + (ctx.raw / total * 100).toFixed(1) + '%)'; } } } } }
+            options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: isMobile ? 'bottom' : 'right', labels: { font: { size: isMobile ? 10 : 10, family: 'PingFang SC, Microsoft YaHei, sans-serif' }, usePointStyle: true, padding: isMobile ? 8 : 10 } }, tooltip: { callbacks: { label: function(ctx) { var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0); return ctx.label + ': ' + ctx.raw.toFixed(0) + ' 万元 (' + (ctx.raw / total * 100).toFixed(1) + '%)'; } } } } }
         });
     } catch(e) { console.error('Chart init error:', e); }
     window._chartInitDone = true;
@@ -845,28 +846,29 @@ function calc() {
     const total_net = total_in - total_out;
     const oppCost = annualBenefit / 12;
 
-    function fm(v, decimals) { // 所有计算精确到小数点后一位，四舍五入
+    function fm(v, decimals) { // decimals=0：万元位结果四舍五入取整，不保留小数点；其它：精确到小数点后一位
+        if (decimals === 0) return Math.round(v).toString();
         return (Math.round((v + Number.EPSILON) * 10) / 10).toFixed(1); }
     function set(id, value, suffix) { const el = document.getElementById(id); if (el) el.textContent = (suffix ? value + suffix : value); }
 
-    set('v_f1_calc', '3,100 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f1', fm(f1, 1) + ' 万');
-    set('v_f3_calc', '6,400 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f3', fm(f3, 1) + ' 万');
-    set('v_f4_calc', '1,050 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f4', fm(f4, 1) + ' 万');
+    set('v_f1_calc', '3,100 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f1', fm(f1, 0) + ' 万');
+    set('v_f3_calc', '6,400 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f3', fm(f3, 0) + ' 万');
+    set('v_f4_calc', '1,050 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f4', fm(f4, 0) + ' 万');
     set('v_configLoss', fm(configLoss, 0) + ' 万');
     set('v_f5_items', bomErrorItems); set('v_f5', bomErrorItems + ' 个');
     set('v_f6_s1_items', bomErrorItems); set('v_f6_s2_items', bomErrorItems); set('v_f6_s3_items', bomErrorItems); set('v_f6_s4_items', bomErrorItems);
-    set('v_f6_s1', fm(f6_s1, 1)); set('v_f6_s2', fm(f6_s2, 1)); set('v_f6_s3', fm(f6_s3, 1)); set('v_f6_s4', fm(f6_s4, 1));
+    set('v_f6_s1', fm(f6_s1, 0)); set('v_f6_s2', fm(f6_s2, 0)); set('v_f6_s3', fm(f6_s3, 0)); set('v_f6_s4', fm(f6_s4, 0));
     set('v_f6', fm(bomErrorLoss, 0) + ' 万');
     set('v_configBomLoss', fm(configBomLoss, 0) + ' 万');
     set('v_f9_calc', fm(p.annualChanges) + ' × 2 × 3 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f9', fm(f9, 0) + ' 万');
-    set('v_f10_rework', fm(reworkChanges, 0)); set('v_f10_rework2', fm(reworkChanges, 0));
-    set('v_f10_calc', fm(reworkChanges, 0) + ' × ' + fm((5 * 4 * p.laborRate + 2000) / 10000, 4) + '万'); set('v_f10', fm(f10, 0) + ' 万');
+    set('v_f10_rework', fm(reworkChanges, 1)); set('v_f10_rework2', fm(reworkChanges, 1));
+    set('v_f10_calc', fm(reworkChanges, 1) + ' × ' + fm((5 * 4 * p.laborRate + 2000) / 10000, 4) + '万'); set('v_f10', fm(f10, 0) + ' 万');
     set('v_changeLoss', fm(changeLoss, 0) + ' 万');
     set('v_f12_calc', fm(p.teamSize) + ' × 15 × 3.5 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f12', fm(f12, 0) + ' 万');
     set('v_f13_calc', fm(p.teamSize) + ' × 15 × 1000 ÷ 10000'); set('v_f13', fm(f13, 0) + ' 万');
     set('v_designDupLoss', fm(designDupLoss, 0) + ' 万');
     set('v_totalLoss', fm(totalLoss, 0) + ' 万');
-    animateQSValue('sec1_total', totalLoss, '');
+    animateQSValue('sec1_total', totalLoss, '', 0);
 
     set('v_f15_base', fm(bomErrorLoss, 0)); set('v_f15_calc', fm(bomErrorLoss, 0) + ' × 70%'); set('v_f15', fm(f15, 0) + ' 万');
     set('v_f16_base', fm(configLoss, 0)); set('v_f16_calc', fm(configLoss, 0) + ' × 66%'); set('v_f16', fm(f16, 0) + ' 万');
@@ -879,20 +881,20 @@ function calc() {
     set('v_designDupBenefit', fm(designDupBenefit, 0) + ' 万');
     set('v_layer1Total', fm(layer1Total, 0) + ' 万'); set('v_layer1Total2', fm(layer1Total, 0) + ' 万');
 
-    set('v_f25_hours', fm(f25, 0)); set('v_f25', fm(f25, 0) + ' h');
-    set('v_f27_hours', fm(f25, 0)); set('v_f27_people', fm(f27, 1)); set('v_f27', fm(f27, 1) + ' 人');
+    set('v_f25_hours', fm(f25, 1)); set('v_f25', fm(f25, 1) + ' h');
+    set('v_f27_hours', fm(f25, 1)); set('v_f27_people', fm(f27, 1)); set('v_f27', fm(f27, 1) + ' 人');
     set('v_f28_people', fm(f27, 1)); set('v_f28_eff', fm(f28, 2)); set('v_f28', fm(f28, 2) + ' 人');
-    set('v_f30_eff', fm(f28, 2)); set('v_f30_calc', fm(f28, 2) + ' × 81'); set('v_f30', fm(f30, 1) + ' 万');
-    set('v_f32_calc', fm(p.newProjCount, 1) + ' × 2000 × 0.225 × 0.15 × 0.5'); set('v_f32', fm(f32, 1) + ' 万');
-    set('v_f33_base', fm(f32, 1)); set('v_f33_calc', fm(f32, 1) + ' × 0.71'); set('v_f33', fm(f33, 1) + ' 万');
-    set('v_f35_calc', '240 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f35', fm(f35, 1) + ' 万');
-    set('v_complianceTotal', fm(complianceTotal, 1) + ' 万');
+    set('v_f30_eff', fm(f28, 2)); set('v_f30_calc', fm(f28, 2) + ' × 81'); set('v_f30', fm(f30, 0) + ' 万');
+    set('v_f32_calc', fm(p.newProjCount, 1) + ' × 2000 × 0.225 × 0.15 × 0.5'); set('v_f32', fm(f32, 0) + ' 万');
+    set('v_f33_base', fm(f32, 0)); set('v_f33_calc', fm(f32, 0) + ' × 0.71'); set('v_f33', fm(f33, 0) + ' 万');
+    set('v_f35_calc', '240 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f35', fm(f35, 0) + ' 万');
+    set('v_complianceTotal', fm(complianceTotal, 0) + ' 万');
     set('v_layer2Total', fm(layer2Total, 0) + ' 万'); set('v_layer2Total2', fm(layer2Total, 0) + ' 万');
     set('v_r3_l1', fm(r3_l1, 0) + ' 万'); set('v_r3_l2', fm(r3_l2, 0) + ' 万'); set('v_r3_l3_people', fm(f27, 1)); set('v_r3_l3', fm(r3_l3, 0) + ' 万'); set('v_r3_total', fm(r3_total, 0) + ' 万');
 
     set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
-    set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 2) + ' 万/月');
-    set('v_roi', fm(roi, 0) + '%'); set('v_ncf5', fm(fiveYearNCF, 0)); set('v_payback', paybackMonth !== null ? fm(paybackMonth, 1) : '>60'); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 1));
+    set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 0) + ' 万/月');
+    set('v_roi', fm(roi, 1) + '%'); set('v_ncf5', fm(fiveYearNCF, 0)); set('v_payback', paybackMonth !== null ? fm(paybackMonth, 1) : '>60'); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 0));
 
     set('v_tco_software', fm(tcoSoftware, 0) + ' 万'); set('v_tco_infra', fm(tcoInfra, 0) + ' 万'); set('v_tco_personnel', fm(tcoPersonnel, 0) + ' 万'); set('v_tco_maint', fm(tcoMaint5y, 0) + ' 万'); set('v_tco_total', fm(totalInvestment, 0) + ' 万');
     const tcoLabel = document.getElementById('v_tco_total_label');
@@ -921,8 +923,8 @@ function calc() {
     document.querySelectorAll('.h_newProjCount').forEach(el => el.textContent = fm(p.newProjCount, 1));
     document.querySelectorAll('.h_annualMaint').forEach(el => el.textContent = fm(p.annualMaint, 0));
 
-    animateQSValue('qs_totalLoss', totalLoss, ''); animateQSValue('qs_layer1Total', layer1Total, ''); animateQSValue('qs_layer2Total', layer2Total, '');
-    animateQSValue('qs_roi', roi, ''); animateQSValue('qs_ncf5', fiveYearNCF, ''); animateQSValue('qs_payback', paybackMonth !== null ? paybackMonth : 61, ''); animateQSValue('qs_npv', npv, '');
+    animateQSValue('qs_totalLoss', totalLoss, '', 0); animateQSValue('qs_layer1Total', layer1Total, '', 0); animateQSValue('qs_layer2Total', layer2Total, '', 0);
+    animateQSValue('qs_roi', roi, '', 0); animateQSValue('qs_ncf5', fiveYearNCF, '', 0); animateQSValue('qs_payback', paybackMonth !== null ? paybackMonth : 61, '', 1); animateQSValue('qs_npv', npv, '', 0);
 
     updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, f30, f33, complianceTotal, y1_net, y2_net, y3_net, y4_net, y5_net, y1_cum, y2_cum, y3_cum, y4_cum, y5_cum);
 }
