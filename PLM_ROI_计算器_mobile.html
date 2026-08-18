@@ -228,7 +228,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
   <h2>基础常量与参数 <span style="font-size:10px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
   <div class="subtitle">以下8个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
   <div class="tco-checkbox-wrap" onclick="toggleTCOMode()">
-    <input type="checkbox" id="chk_tcoMode" checked>
+    <input type="checkbox" id="chk_tcoMode">
     <span class="tco-label">按TCO总体拥有成本计算</span>
     <span class="tco-hint">— 取消勾选则仅按项目采购成本计算</span>
   </div>
@@ -645,10 +645,8 @@ function fmtQS(v, decimals) {
     return Number.isInteger(r) ? String(r) : r.toFixed(1);
 }
 
-let tcoMode = true;
-function toggleTCOMode() {
-    const chk = document.getElementById('chk_tcoMode');
-    tcoMode = chk.checked;
+let tcoMode = false; // 默认不勾选 TCO
+function applyTCOUI() {
     const maintItem = document.getElementById('paramItem_annualMaint');
     const maintInput = document.getElementById('p_annualMaint');
     if (tcoMode) { maintItem.classList.remove('disabled'); maintInput.disabled = false; maintInput.value = defaults.annualMaint; }
@@ -659,6 +657,10 @@ function toggleTCOMode() {
     });
     const badge = document.getElementById('badge_investment');
     if (badge) badge.textContent = tcoMode ? 'TCO 总体拥有成本' : '仅软件采购';
+}
+function toggleTCOMode() {
+    tcoMode = document.getElementById('chk_tcoMode').checked;
+    applyTCOUI();
     calc();
 }
 
@@ -942,13 +944,9 @@ function resetParams() {
     document.getElementById('p_teamSize').value = defaults.teamSize;
     document.getElementById('p_newProjCount').value = defaults.newProjCount;
     document.getElementById('p_discountRate').value = defaults.discountRate;
-    document.getElementById('chk_tcoMode').checked = true;
-    tcoMode = true;
-    document.getElementById('p_annualMaint').value = defaults.annualMaint;
-    document.getElementById('p_annualMaint').disabled = false;
-    document.getElementById('paramItem_annualMaint').classList.remove('disabled');
-    ['row_tco_infra', 'row_tco_personnel', 'row_tco_maint'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('hidden-row'); });
-    const badge = document.getElementById('badge_investment'); if (badge) badge.textContent = 'TCO 总体拥有成本';
+    document.getElementById('chk_tcoMode').checked = false;
+    tcoMode = false;
+    applyTCOUI();
     document.querySelectorAll('.param-item input').forEach(inp => inp.classList.remove('changed'));
     calc();
 }
@@ -968,8 +966,8 @@ function updateQuickNav() {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { initMobileParamPanel(); initCharts(); calc(); window.addEventListener('scroll', updateQuickNav, { passive: true }); });
-} else { initMobileParamPanel(); initCharts(); calc(); window.addEventListener('scroll', updateQuickNav, { passive: true }); }
+    document.addEventListener('DOMContentLoaded', function() { initMobileParamPanel(); applyTCOUI(); initCharts(); calc(); window.addEventListener('scroll', updateQuickNav, { passive: true }); });
+} else { initMobileParamPanel(); applyTCOUI(); initCharts(); calc(); window.addEventListener('scroll', updateQuickNav, { passive: true }); }
 </script>
 </body>
 </html>
