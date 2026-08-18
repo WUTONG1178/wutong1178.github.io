@@ -113,8 +113,6 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 /* 动画 */
 @keyframes highlight-pulse{0%,100%{background:transparent;}50%{background:rgba(253,203,110,0.2);}}
 .highlight-pulse{animation:highlight-pulse 0.6s ease;}
-.inline-ic{display:inline-block;vertical-align:-2px;width:14px;height:14px;margin-right:3px;}
-.inline-ic svg{width:100%;height:100%;display:block;}
 </style>
 </head>
 <body>
@@ -122,7 +120,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 
 <!-- ===== 参数面板 ===== -->
 <div class="param-panel" id="paramPanel">
-  <h2><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4.5h12M2 8h12M2 11.5h12"/><circle cx="5.5" cy="4.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="10.5" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="11.5" r="1.5" fill="currentColor" stroke="none"/></svg></span>基础常量与参数 <span style="font-size:11px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
+  <h2>基础常量与参数 <span style="font-size:11px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
   <div class="subtitle">以下6个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
   <div class="param-grid">
     <div class="param-item">
@@ -549,7 +547,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <div class="chart-wrap"><canvas id="chartAnnualCF"></canvas></div>
       </div>
       <div class="chart-card">
-        <h4><span class="inline-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,12.5 6.5,9.5 10,8.5 13.5,4.5"/><circle cx="13.5" cy="4.5" r="1.2" fill="currentColor" stroke="none"/></svg></span>五年累计净现金流趋势</h4>
+        <h4>五年累计净现金流趋势</h4>
         <div class="chart-wrap"><canvas id="chartCumCF"></canvas></div>
       </div>
       <div class="chart-card chart-card-full">
