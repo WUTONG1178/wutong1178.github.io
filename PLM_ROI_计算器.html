@@ -23,6 +23,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 .param-item input{width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;transition:all 0.2s;}
 .param-item input:focus{border-color:#00a8ff;box-shadow:0 0 0 3px rgba(0,168,255,0.15);}
 .param-item input.changed{border-color:#fdcb6e;box-shadow:0 0 0 3px rgba(253,203,110,0.15);}
+.param-item select{width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;transition:all 0.2s;cursor:pointer;-webkit-appearance:none;appearance:none;}
+.param-item select option{background:#1e2a36;color:#fff;}
+.param-item select:focus{border-color:#00a8ff;box-shadow:0 0 0 3px rgba(0,168,255,0.15);}
 .param-reset{text-align:right;margin-top:10px;}
 .param-reset button{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#a0a8c0;padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.2s;}
 .param-reset button:hover{background:rgba(255,255,255,0.15);color:#fff;}
@@ -121,7 +124,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
 <!-- ===== 参数面板 ===== -->
 <div class="param-panel" id="paramPanel">
   <h2>基础常量与参数 <span style="font-size:11px;font-weight:400;color:#74b9ff;">（修改任意数值，下方所有公式自动重算）</span></h2>
-  <div class="subtitle">以下7个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
+  <div class="subtitle">以下8个参数是全部49个公式的计算基础，修改后所有关联公式实时更新</div>
   <div class="param-grid">
     <div class="param-item">
       <label>工时费率 <span class="unit">元/人时</span></label>
@@ -150,6 +153,17 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     <div class="param-item">
       <label>NPV折现率 <span class="unit">%</span></label>
       <input type="number" id="p_discountRate" value="8" step="0.5" min="0" max="50" oninput="onParamChange()">
+    </div>
+    <div class="param-item">
+      <label>ROI 计算年限 <span class="unit">年</span></label>
+      <select id="p_calcYears" onchange="onParamChange()">
+        <option value="1">1 年</option>
+        <option value="2">2 年</option>
+        <option value="3">3 年</option>
+        <option value="4">4 年</option>
+        <option value="5" selected>5 年</option>
+        <option value="6">6 年</option>
+      </select>
     </div>
   </div>
   <div class="param-reset">
@@ -507,9 +521,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     <div class="card">
       <h3>4.2 投资成本 <span class="badge badge-red">投入</span></h3>
       <div class="formula-row">
-        <span class="f-id">F42</span><span class="f-label">项目总投入（固定）</span>
-        <span class="f-formula">首付185万 + 验收150万 + 尾款200万</span>
-        <span class="f-result loss">535 万</span>
+        <span class="f-id">F42</span><span class="f-label" id="lbl_f42">项目总投入</span>
+        <span class="f-formula" id="v_f42_formula">首付185万 + 验收150万 + 尾款200万</span>
+        <span class="f-result loss" id="v_tco_software">535 万</span>
       </div>
     </div>
 
@@ -517,12 +531,12 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <h3>4.3 核心财务指标</h3>
       <div class="fin-grid">
         <div class="fin-card">
-          <div class="fin-label">F45 五年总投资回报率</div>
+          <div class="fin-label" id="lbl_roi">F45 五年总投资回报率</div>
           <div class="fin-value" style="color:#00b894;" id="v_roi">—</div>
           <div class="fin-unit">%</div>
         </div>
         <div class="fin-card">
-          <div class="fin-label">F44 五年累计净现金流</div>
+          <div class="fin-label" id="lbl_ncf">F44 五年累计净现金流</div>
           <div class="fin-value" style="color:#00a8ff;" id="v_ncf5">—</div>
           <div class="fin-unit">万</div>
         </div>
@@ -547,11 +561,11 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     <!-- 财务指标图表 -->
     <div class="charts-grid">
       <div class="chart-card">
-        <h4>📊 五年年度净现金流</h4>
+        <h4 id="lbl_chart_annual">📊 五年年度净现金流</h4>
         <div class="chart-wrap"><canvas id="chartAnnualCF"></canvas></div>
       </div>
       <div class="chart-card">
-        <h4>五年累计净现金流趋势</h4>
+        <h4 id="lbl_chart_cum">五年累计净现金流趋势</h4>
         <div class="chart-wrap"><canvas id="chartCumCF"></canvas></div>
       </div>
       <div class="chart-card chart-card-full">
@@ -561,15 +575,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     </div>
 
     <div class="card">
-      <h3>4.4 五年现金流量表（年度汇总）</h3>
+      <h3 id="lbl_cf_table">4.4 五年现金流量表（年度汇总）</h3>
       <table class="summary-table">
-        <tr><th>年份</th><th>现金流入（收益）</th><th>现金流出（投入）</th><th>年度净现金流</th><th>累计净现金流</th></tr>
-        <tr><td>第1年（月1-12）</td><td id="v_cf_y1_in">—</td><td class="td-loss" id="v_cf_y1_out">264万</td><td class="td-benefit" id="v_cf_y1_net">—</td><td id="v_cf_y1_cum">—</td></tr>
-        <tr><td>第2年（月13-24）</td><td id="v_cf_y2_in">—</td><td class="td-loss" id="v_cf_y2_out">—</td><td class="td-benefit" id="v_cf_y2_net">—</td><td id="v_cf_y2_cum">—</td></tr>
-        <tr><td>第3年（月25-36）</td><td id="v_cf_y3_in">—</td><td>0</td><td class="td-benefit" id="v_cf_y3_net">—</td><td id="v_cf_y3_cum">—</td></tr>
-        <tr><td>第4年（月37-48）</td><td id="v_cf_y4_in">—</td><td>0</td><td class="td-benefit" id="v_cf_y4_net">—</td><td id="v_cf_y4_cum">—</td></tr>
-        <tr><td>第5年（月49-60）</td><td id="v_cf_y5_in">—</td><td>0</td><td class="td-benefit" id="v_cf_y5_net">—</td><td id="v_cf_y5_cum">—</td></tr>
-        <tr class="td-total"><td>五年合计</td><td id="v_cf_total_in">—</td><td class="td-loss" id="v_cf_total_out">—</td><td id="v_cf_total_net" style="font-weight:700;font-size:15px;">—</td><td>—</td></tr>
+        <thead><tr><th>年份</th><th>现金流入（收益）</th><th>现金流出（投入）</th><th>年度净现金流</th><th>累计净现金流</th></tr></thead>
+        <tbody id="cfTableBody"></tbody>
       </table>
     </div>
   </div>
@@ -676,6 +685,7 @@ const defaults = {
     teamSize: 110,
     newProjCount: 2.5,
     discountRate: 8,
+    calcYears: 5,
 };
 
 // ===== Chart instances =====
@@ -720,10 +730,17 @@ function initCharts() {
     } catch(e) { console.error('Chart init error:', e); }
 }
 
-function updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal, y1_net, y2_net, y3_net, y4_net, y5_net, y1_cum, y2_cum, y3_cum, y4_cum, y5_cum) {
+function updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal, yearlyNets, yearlyCums, years) {
     try {
-        if (chartAnnualCF) { chartAnnualCF.data.datasets[0].data = [y1_net, y2_net, y3_net, y4_net, y5_net]; chartAnnualCF.update('none'); }
-        if (chartCumCF) { chartCumCF.data.datasets[0].data = [y1_cum, y2_cum, y3_cum, y4_cum, y5_cum]; chartCumCF.update('none'); }
+        const labels = Array.from({ length: years }, (_, i) => '第' + (i + 1) + '年');
+        if (chartAnnualCF) {
+            chartAnnualCF.data.labels = labels;
+            chartAnnualCF.data.datasets[0].data = yearlyNets;
+            chartAnnualCF.data.datasets[0].backgroundColor = yearlyNets.map(v => v < 0 ? '#fab1a0' : '#00b894');
+            chartAnnualCF.data.datasets[0].borderColor = yearlyNets.map(v => v < 0 ? '#e17055' : '#00b894');
+            chartAnnualCF.update('none');
+        }
+        if (chartCumCF) { chartCumCF.data.labels = labels; chartCumCF.data.datasets[0].data = yearlyCums; chartCumCF.update('none'); }
         if (chartBenefit) { chartBenefit.data.datasets[0].data = [configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal]; chartBenefit.update('none'); }
     } catch(e) { console.error('Chart update error:', e); }
 }
@@ -737,6 +754,7 @@ function calc() {
         teamSize: parseInt(document.getElementById('p_teamSize').value) || 0,
         newProjCount: parseFloat(document.getElementById('p_newProjCount').value) || 0,
         discountRate: parseFloat(document.getElementById('p_discountRate').value) / 100 || 0,
+        calcYears: parseInt(document.getElementById('p_calcYears').value) || 5,
     };
 
     const bomErrorItems = Math.round(p.bomItems * p.bomErrorRate);
@@ -796,20 +814,24 @@ function calc() {
     const annualBenefit = layer1Total + layer2Total;
     const monthlyBenefit = annualBenefit / 12;
 
-    const totalInvestment = 535;
+    // ===== 投资与现金流模型（年限可调：1~6年） =====
+    const years = p.calcYears;
+    const totalMonths = years * 12;
+    const totalInvestment = 185 + 150 + (totalMonths >= 20 ? 200 : 0); // 尾款第20月支付，年限不足则不计
     const m = monthlyBenefit;
+    // 月度现金流：第1月首付185；收益与验收款150从第8月起；尾款200第20月
     const cashflows = [];
-    cashflows.push(-185);
-    for (let i = 2; i <= 7; i++) cashflows.push(0);
-    cashflows.push(m - 150);
-    for (let i = 9; i <= 11; i++) cashflows.push(m);
-    cashflows.push(m);
-    for (let i = 13; i <= 19; i++) cashflows.push(m);
-    cashflows.push(m - 200);
-    for (let i = 21; i <= 60; i++) cashflows.push(m);
+    for (let i = 1; i <= totalMonths; i++) {
+        let cf = 0;
+        if (i >= 8) cf += m;
+        if (i === 1) cf -= 185;
+        if (i === 8) cf -= 150;
+        if (i === 20) cf -= 200;
+        cashflows.push(cf);
+    }
 
     let cum = 0; let paybackMonth = null;
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < totalMonths; i++) {
         cum += cashflows[i];
         if (paybackMonth === null && cum > 0) {
             const prevCum = cum - cashflows[i];
@@ -817,21 +839,30 @@ function calc() {
             paybackMonth = (i + 1) - 1 + frac;
         }
     }
-    const fiveYearNCF = cum;
-    const roi = (fiveYearNCF / totalInvestment) * 100;
+    const horizonNCF = cum;
+    const roi = (horizonNCF / totalInvestment) * 100;
 
     const annualDiscount = p.discountRate;
     const monthlyDiscount = Math.pow(1 + annualDiscount, 1/12) - 1;
     let npv = 0;
-    for (let i = 0; i < 60; i++) { npv += cashflows[i] / Math.pow(1 + monthlyDiscount, i + 1); }
+    for (let i = 0; i < totalMonths; i++) { npv += cashflows[i] / Math.pow(1 + monthlyDiscount, i + 1); }
 
-    const y1_in = m * 5; const y1_out = 185 + 150; const y1_net = y1_in - y1_out; const y1_cum = y1_net;
-    const y2_in = m * 12; const y2_out = 200; const y2_net = y2_in - y2_out; const y2_cum = y1_cum + y2_net;
-    const y3_in = m * 12; const y3_out = 0; const y3_net = y3_in; const y3_cum = y2_cum + y3_net;
-    const y4_in = m * 12; const y4_out = 0; const y4_net = y4_in; const y4_cum = y3_cum + y4_net;
-    const y5_in = m * 12; const y5_out = 0; const y5_net = y5_in; const y5_cum = y4_cum + y5_net;
-    const total_in = y1_in + y2_in + y3_in + y4_in + y5_in;
-    const total_out = y1_out + y2_out; const total_net = total_in - total_out;
+    // 年度现金流表（按所选年限逐月归集到年）
+    const yearly = [];
+    let cumY = 0, total_in = 0, total_out = 0;
+    for (let y = 1; y <= years; y++) {
+        let yin = 0, yout = 0;
+        for (let i = (y - 1) * 12 + 1; i <= y * 12; i++) {
+            if (i >= 8) yin += m;
+            if (i === 1) yout += 185;
+            if (i === 8) yout += 150;
+            if (i === 20) yout += 200;
+        }
+        const ynet = yin - yout;
+        cumY += ynet; total_in += yin; total_out += yout;
+        yearly.push({ in: yin, out: yout, net: ynet, cum: cumY });
+    }
+    const total_net = total_in - total_out;
     const oppCost = annualBenefit / 12;
 
     function fm(v, decimals) {
@@ -894,15 +925,26 @@ function calc() {
 
     set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
     set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 0) + ' 万/月');
-    set('v_roi', fm(roi, 1) + '%'); set('v_ncf5', fm(fiveYearNCF, 0)); set('v_payback', fm(paybackMonth || 0, 1)); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 0));
+    set('v_roi', fm(roi, 1) + '%'); set('v_ncf5', fm(horizonNCF, 0)); set('v_payback', paybackMonth !== null ? fm(paybackMonth, 1) : '>' + totalMonths); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 0));
     set('lbl_npv', 'F47 净现值 NPV@' + fm(p.discountRate * 100, 1) + '%');
+    set('lbl_roi', 'F45 ' + years + '年总投资回报率'); set('lbl_ncf', 'F44 ' + years + '年累计净现金流');
+    set('lbl_chart_annual', '📊 ' + years + '年年度净现金流'); set('lbl_chart_cum', years + '年累计净现金流趋势');
+    set('lbl_cf_table', '4.4 ' + years + '年现金流量表（年度汇总）');
+    set('v_tco_software', fm(totalInvestment, 0) + ' 万'); set('v_f42_formula', '首付185万 + 验收150万' + (totalMonths >= 20 ? ' + 尾款200万' : '（尾款200万未到期，不计）'));
 
-    set('v_cf_y1_in', fm(y1_in, 0) + ' 万'); set('v_cf_y1_net', '+' + fm(y1_net, 0) + ' 万'); set('v_cf_y1_cum', '+' + fm(y1_cum, 0) + ' 万');
-    set('v_cf_y2_in', fm(y2_in, 0) + ' 万'); set('v_cf_y2_out', fm(y2_out, 0) + ' 万'); set('v_cf_y2_net', '+' + fm(y2_net, 0) + ' 万'); set('v_cf_y2_cum', '+' + fm(y2_cum, 0) + ' 万');
-    set('v_cf_y3_in', fm(y3_in, 0) + ' 万'); set('v_cf_y3_net', '+' + fm(y3_net, 0) + ' 万'); set('v_cf_y3_cum', '+' + fm(y3_cum, 0) + ' 万');
-    set('v_cf_y4_in', fm(y4_in, 0) + ' 万'); set('v_cf_y4_net', '+' + fm(y4_net, 0) + ' 万'); set('v_cf_y4_cum', '+' + fm(y4_cum, 0) + ' 万');
-    set('v_cf_y5_in', fm(y5_in, 0) + ' 万'); set('v_cf_y5_net', '+' + fm(y5_net, 0) + ' 万'); set('v_cf_y5_cum', '+' + fm(y5_cum, 0) + ' 万');
-    set('v_cf_total_in', fm(total_in, 0) + ' 万'); set('v_cf_total_out', fm(total_out, 0) + ' 万'); set('v_cf_total_net', '+' + fm(total_net, 0) + ' 万');
+    // 现金流量表：按年限动态生成行
+    const cfBody = document.getElementById('cfTableBody');
+    if (cfBody) {
+        let rows = '';
+        yearly.forEach((yr, idx) => {
+            const startM = idx * 12 + 1, endM = (idx + 1) * 12;
+            rows += '<tr><td>第' + (idx + 1) + '年（月' + startM + '-' + endM + '）</td>'
+                + '<td>' + fm(yr.in, 0) + ' 万</td><td class="td-loss">' + fm(yr.out, 0) + ' 万</td>'
+                + '<td class="td-benefit">+' + fm(yr.net, 0) + ' 万</td><td>+' + fm(yr.cum, 0) + ' 万</td></tr>';
+        });
+        rows += '<tr class="td-total"><td>' + years + '年合计</td><td>' + fm(total_in, 0) + ' 万</td><td class="td-loss">' + fm(total_out, 0) + ' 万</td><td style="font-weight:700;font-size:15px;">+' + fm(total_net, 0) + ' 万</td><td>—</td></tr>';
+        cfBody.innerHTML = rows;
+    }
 
     set('s_configBomLoss', fm(configBomLoss, 0)); set('s_configBomBenefit', fm(configBomBenefit, 0)); set('s_configBomTotal', fm(configBomBenefit, 0));
     set('s_changeLoss', fm(changeLoss, 0)); set('s_changeBenefit', fm(changeBenefit, 0)); set('s_changeTotal', fm(changeBenefit, 0));
@@ -919,7 +961,7 @@ function calc() {
     document.querySelectorAll('.h_teamSize').forEach(el => el.textContent = p.teamSize);
     document.querySelectorAll('.h_newProjCount').forEach(el => el.textContent = fm(p.newProjCount, 1));
 
-    updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, f30, f33, complianceTotal, y1_net, y2_net, y3_net, y4_net, y5_net, y1_cum, y2_cum, y3_cum, y4_cum, y5_cum);
+    updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, f30, f33, complianceTotal, yearly.map(y => y.net), yearly.map(y => y.cum), years);
 }
 
 function onParamChange() {
@@ -940,6 +982,7 @@ function resetParams() {
     document.getElementById('p_teamSize').value = defaults.teamSize;
     document.getElementById('p_newProjCount').value = defaults.newProjCount;
     document.getElementById('p_discountRate').value = defaults.discountRate;
+    document.getElementById('p_calcYears').value = defaults.calcYears;
     document.querySelectorAll('.param-item input').forEach(inp => inp.classList.remove('changed'));
     calc();
 }
