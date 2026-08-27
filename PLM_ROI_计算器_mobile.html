@@ -869,8 +869,15 @@ function calc() {
         if (i >= 9 + rampCfg.months - 1) return 1;
         return rampCfg.start + (1 - rampCfg.start) * (i - 9) / (rampCfg.months - 1);
     };
+    // 质量模块第25月上线后按同一条曲线独立爬坡（无爬坡模式则上线即全额）
+    const qAdoption = (i) => {
+        if (i < 25) return 0;
+        if (!rampCfg) return 1;
+        if (i >= 25 + rampCfg.months - 1) return 1;
+        return rampCfg.start + (1 - rampCfg.start) * (i - 25) / (rampCfg.months - 1);
+    };
     const rampDesc = !rampCfg ? '收益按全额计入（无爬坡）。'
-        : '上线后采纳率自' + Math.round(rampCfg.start * 100) + '%线性爬升，第' + (9 + rampCfg.months - 1) + '月达100%，此前各月收益按对应比例计入。';
+        : '上线后采纳率自' + Math.round(rampCfg.start * 100) + '%线性爬升，第' + (9 + rampCfg.months - 1) + '月达100%；质量管理自第25月上线后按同样曲线自' + Math.round(rampCfg.start * 100) + '%单独爬升，第' + (25 + rampCfg.months - 1) + '月达100%。';
     const annualMaint = tcoMode ? p.annualMaint : 0;
     const firstPayment = tcoMode ? 335 : 185;
     const acceptancePayment = 150;
@@ -880,7 +887,7 @@ function calc() {
     const cashflows = [];
     for (let i = 1; i <= totalMonths; i++) {
         let cf = -monthlyMaint;
-        if (i >= 9) cf += (i >= 25 ? m : mExQ) * adoption(i);
+        if (i >= 9) cf += mExQ * adoption(i) + (m - mExQ) * qAdoption(i);
         if (i === 1) cf -= firstPayment;
         if (i === 9) cf -= acceptancePayment;
         if (i === 21) cf -= finalPayment;
@@ -910,7 +917,7 @@ function calc() {
     for (let y = 1; y <= years; y++) {
         let yin = 0, yout = 0;
         for (let i = (y - 1) * 12 + 1; i <= y * 12; i++) {
-            if (i >= 9) yin += (i >= 25 ? m : mExQ) * adoption(i);
+            if (i >= 9) yin += mExQ * adoption(i) + (m - mExQ) * qAdoption(i);
             yout += monthlyMaint;
             if (i === 1) yout += firstPayment;
             if (i === 9) yout += acceptancePayment;
