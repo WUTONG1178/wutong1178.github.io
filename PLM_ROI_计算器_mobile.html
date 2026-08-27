@@ -539,6 +539,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
       <h3>4.1 年度总收益</h3>
       <div class="formula-row"><span class="f-id">F40</span><span class="f-label">年度总收益</span><span class="f-formula"><span id="v_f40_l1"></span> 万（第一层）+ <span id="v_f40_l2"></span> 万（第二层）= <span id="v_f40_total"></span></span><span class="f-result benefit" id="v_f40" style="font-size:16px;">—</span></div>
       <div class="formula-row"><span class="f-id">F41</span><span class="f-label">月度收益换算</span><span class="f-formula"><span id="v_f41_annual"></span> 万 ÷ 12 = <span id="v_f41_monthly"></span></span><span class="f-result neutral" id="v_f41">—</span></div>
+      <div style="font-size:12px;color:#636e72;margin-top:4px;line-height:1.5;">注：第9月~第24月按月收益（<b>不含质量管理部分</b>）计入；质量管理收益自<b>第25月</b>起计入。</div>
     </div>
     <div class="card">
       <h3>4.2 投资成本 <span class="badge badge-red" id="badge_investment">TCO 总体拥有成本</span></h3>
@@ -845,6 +846,7 @@ function calc() {
     const totalInvestment = tcoSoftware + tcoInfra + tcoPersonnel + tcoMaint;
 
     const m = monthlyBenefit;
+    const mExQ = monthlyBenefit - qualityBenefit / 12; // 第9~24月：不含质量管理部分（质量管理自第25月上线）
     const annualMaint = tcoMode ? p.annualMaint : 0;
     const firstPayment = tcoMode ? 335 : 185;
     const acceptancePayment = 150;
@@ -854,7 +856,7 @@ function calc() {
     const cashflows = [];
     for (let i = 1; i <= totalMonths; i++) {
         let cf = -monthlyMaint;
-        if (i >= 9) cf += m;
+        if (i >= 9) cf += (i >= 25 ? m : mExQ);
         if (i === 1) cf -= firstPayment;
         if (i === 9) cf -= acceptancePayment;
         if (i === 21) cf -= finalPayment;
@@ -884,7 +886,7 @@ function calc() {
     for (let y = 1; y <= years; y++) {
         let yin = 0, yout = 0;
         for (let i = (y - 1) * 12 + 1; i <= y * 12; i++) {
-            if (i >= 9) yin += m;
+            if (i >= 9) yin += (i >= 25 ? m : mExQ);
             yout += monthlyMaint;
             if (i === 1) yout += firstPayment;
             if (i === 9) yout += acceptancePayment;

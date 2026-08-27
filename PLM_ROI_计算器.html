@@ -516,6 +516,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <span class="f-formula"><span id="v_f41_annual"></span> 万 ÷ 12 = <span id="v_f41_monthly"></span></span>
         <span class="f-result neutral" id="v_f41">—</span>
       </div>
+      <div style="font-size:12px;color:#636e72;margin-top:4px;line-height:1.5;">注：第8月~第24月按月收益（<b>不含质量管理部分</b>）计入；质量管理收益自<b>第25月</b>起计入。</div>
     </div>
 
     <div class="card">
@@ -819,11 +820,12 @@ function calc() {
     const totalMonths = years * 12;
     const totalInvestment = 185 + 150 + (totalMonths >= 20 ? 200 : 0); // 尾款第20月支付，年限不足则不计
     const m = monthlyBenefit;
+    const mExQ = monthlyBenefit - qualityBenefit / 12; // 第8~24月：不含质量管理部分（质量管理自第25月上线）
     // 月度现金流：第1月首付185；收益与验收款150从第8月起；尾款200第20月
     const cashflows = [];
     for (let i = 1; i <= totalMonths; i++) {
         let cf = 0;
-        if (i >= 8) cf += m;
+        if (i >= 8) cf += (i >= 25 ? m : mExQ);
         if (i === 1) cf -= 185;
         if (i === 8) cf -= 150;
         if (i === 20) cf -= 200;
@@ -853,7 +855,7 @@ function calc() {
     for (let y = 1; y <= years; y++) {
         let yin = 0, yout = 0;
         for (let i = (y - 1) * 12 + 1; i <= y * 12; i++) {
-            if (i >= 8) yin += m;
+            if (i >= 8) yin += (i >= 25 ? m : mExQ);
             if (i === 1) yout += 185;
             if (i === 8) yout += 150;
             if (i === 20) yout += 200;
