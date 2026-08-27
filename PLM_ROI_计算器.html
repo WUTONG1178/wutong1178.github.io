@@ -165,6 +165,14 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <option value="6">6 年</option>
       </select>
     </div>
+    <div class="param-item">
+      <label>能力爬坡</label>
+      <select id="p_rampMode" onchange="onParamChange()">
+        <option value="none" selected>现状（无爬坡）</option>
+        <option value="r6">爬坡 6 月、50% 起</option>
+        <option value="r12">爬坡 12 月、30% 起</option>
+      </select>
+    </div>
   </div>
   <div class="param-reset">
     <button onclick="resetParams()">↺ 恢复默认值</button>
@@ -517,6 +525,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <span class="f-result neutral" id="v_f41">—</span>
       </div>
       <div style="font-size:12px;color:#636e72;margin-top:4px;line-height:1.5;">注：第8月~第24月按月收益（<b>不含质量管理部分</b>）计入；质量管理收益自<b>第25月</b>起计入。</div>
+      <div style="font-size:12px;color:#636e72;margin-top:4px;line-height:1.5;" id="note_ramp">注：收益按全额计入（无爬坡）。</div>
     </div>
 
     <div class="card">
@@ -687,6 +696,7 @@ const defaults = {
     newProjCount: 2.5,
     discountRate: 8,
     calcYears: 5,
+    rampMode: 'none',
 };
 
 // ===== Chart instances =====
@@ -756,6 +766,7 @@ function calc() {
         newProjCount: parseFloat(document.getElementById('p_newProjCount').value) || 0,
         discountRate: parseFloat(document.getElementById('p_discountRate').value) / 100 || 0,
         calcYears: parseInt(document.getElementById('p_calcYears').value) || 5,
+        rampMode: document.getElementById('p_rampMode').value || 'none',
     };
 
     const bomErrorItems = Math.round(p.bomItems * p.bomErrorRate);
@@ -821,11 +832,25 @@ function calc() {
     const totalInvestment = 185 + 150 + (totalMonths >= 20 ? 200 : 0); // 尾款第20月支付，年限不足则不计
     const m = monthlyBenefit;
     const mExQ = monthlyBenefit - qualityBenefit / 12; // 第8~24月：不含质量管理部分（质量管理自第25月上线）
+    // 能力爬坡：上线(第8月)后采纳率自起点线性升至100%，爬坡期满后为全额
+    const RAMP_CFG = {
+        none: null,
+        r6:  { months: 6,  start: 0.5 },
+        r12: { months: 12, start: 0.3 },
+    };
+    const rampCfg = RAMP_CFG[p.rampMode] || null;
+    const adoption = (i) => {
+        if (!rampCfg || i < 8) return 1;
+        if (i >= 8 + rampCfg.months - 1) return 1;
+        return rampCfg.start + (1 - rampCfg.start) * (i - 8) / (rampCfg.months - 1);
+    };
+    const rampDesc = !rampCfg ? '收益按全额计入（无爬坡）。'
+        : '上线后采纳率自' + Math.round(rampCfg.start * 100) + '%线性爬升，第' + (8 + rampCfg.months - 1) + '月达100%，此前各月收益按对应比例计入。';
     // 月度现金流：第1月首付185；收益与验收款150从第8月起；尾款200第20月
     const cashflows = [];
     for (let i = 1; i <= totalMonths; i++) {
         let cf = 0;
-        if (i >= 8) cf += (i >= 25 ? m : mExQ);
+        if (i >= 8) cf += (i >= 25 ? m : mExQ) * adoption(i);
         if (i === 1) cf -= 185;
         if (i === 8) cf -= 150;
         if (i === 20) cf -= 200;
@@ -855,7 +880,7 @@ function calc() {
     for (let y = 1; y <= years; y++) {
         let yin = 0, yout = 0;
         for (let i = (y - 1) * 12 + 1; i <= y * 12; i++) {
-            if (i >= 8) yin += (i >= 25 ? m : mExQ);
+            if (i >= 8) yin += (i >= 25 ? m : mExQ) * adoption(i);
             if (i === 1) yout += 185;
             if (i === 8) yout += 150;
             if (i === 20) yout += 200;
@@ -927,6 +952,7 @@ function calc() {
 
     set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
     set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 0) + ' 万/月');
+    set('note_ramp', '注：' + rampDesc);
     set('v_roi', fm(roi, 1) + '%'); set('v_ncf5', fm(horizonNCF, 0)); set('v_payback', paybackMonth !== null ? fm(paybackMonth, 1) : '>' + totalMonths); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 0));
     set('lbl_npv', 'F47 净现值 NPV@' + fm(p.discountRate * 100, 1) + '%');
     set('lbl_roi', 'F45 ' + years + '年总投资回报率'); set('lbl_ncf', 'F44 ' + years + '年累计净现金流');
@@ -985,6 +1011,7 @@ function resetParams() {
     document.getElementById('p_newProjCount').value = defaults.newProjCount;
     document.getElementById('p_discountRate').value = defaults.discountRate;
     document.getElementById('p_calcYears').value = defaults.calcYears;
+    document.getElementById('p_rampMode').value = defaults.rampMode;
     document.querySelectorAll('.param-item input').forEach(inp => inp.classList.remove('changed'));
     calc();
 }
