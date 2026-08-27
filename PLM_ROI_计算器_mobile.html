@@ -564,6 +564,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     <div class="charts-grid">
       <div class="chart-card"><h4 id="lbl_chart_annual">📊 五年年度净现金流</h4><div class="chart-wrap"><canvas id="chartAnnualCF"></canvas></div></div>
       <div class="chart-card"><h4 id="lbl_chart_cum">五年累计净现金流趋势</h4><div class="chart-wrap"><canvas id="chartCumCF"></canvas></div></div>
+      <div class="chart-card chart-card-full"><h4 id="lbl_chart_monthly">📊 月度净现金流</h4><div class="chart-wrap"><canvas id="chartMonthlyCF"></canvas></div></div>
       <div class="chart-card chart-card-full"><h4>🍩 年度总收益构成</h4><div class="chart-wrap"><canvas id="chartBenefit"></canvas></div></div>
     </div>
     <div class="card">
@@ -685,7 +686,7 @@ function initMobileParamPanel() {
     if (window.innerWidth <= 640) { document.getElementById('paramGrid').classList.add('collapsed-mobile'); document.getElementById('paramReset').classList.add('collapsed-mobile'); }
 }
 
-let chartAnnualCF = null, chartCumCF = null, chartBenefit = null;
+let chartAnnualCF = null, chartCumCF = null, chartMonthlyCF = null, chartBenefit = null;
 
 // 全局数字格式化：保留1位小数、四舍五入；小数部分为0时显示整数
 function fmt1(v) {
@@ -718,6 +719,15 @@ function initCharts() {
             options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: isMobile ? 9 : 10 } }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + fmt1(ctx.raw) + ' 万元' } } } }
         });
 
+        const ctx2b = document.getElementById('chartMonthlyCF');
+        if (!ctx2b) return;
+        if (chartMonthlyCF) chartMonthlyCF.destroy();
+        chartMonthlyCF = new Chart(ctx2b, {
+            type: 'bar',
+            data: { labels: Array.from({ length: 60 }, (_, i) => '第' + (i + 1) + '月'), datasets: [{ label: '月度净现金流 (万元)', data: [], backgroundColor: [], borderColor: [], borderWidth: 1, borderRadius: 3, barPercentage: 0.9 }] },
+            options: { ...commonOptions, scales: { y: { ticks: { callback: v => v + '万', font: { size: 10 } }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: isMobile ? 8 : 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: isMobile ? 12 : 24 }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + fmt1(ctx.raw) + ' 万元' } } } }
+        });
+
         const ctx3 = document.getElementById('chartBenefit');
         if (!ctx3) return;
         if (chartBenefit) chartBenefit.destroy();
@@ -730,9 +740,10 @@ function initCharts() {
     window._chartInitDone = true;
 }
 
-function updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal, yearlyNets, yearlyCums, years) {
+function updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal, yearlyNets, yearlyCums, years, monthlyCashflows) {
     try {
         const labels = Array.from({ length: years }, (_, i) => '第' + (i + 1) + '年');
+        const mLabels = Array.from({ length: (monthlyCashflows || []).length }, (_, i) => '第' + (i + 1) + '月');
         if (chartAnnualCF) {
             chartAnnualCF.data.labels = labels;
             chartAnnualCF.data.datasets[0].data = yearlyNets;
@@ -741,6 +752,15 @@ function updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit,
             chartAnnualCF.update('none');
         }
         if (chartCumCF) { chartCumCF.data.labels = labels; chartCumCF.data.datasets[0].data = yearlyCums; chartCumCF.update('none'); }
+        if (chartMonthlyCF && monthlyCashflows) {
+            chartMonthlyCF.data.labels = mLabels;
+            chartMonthlyCF.data.datasets[0].data = monthlyCashflows;
+            // 三个付款节点用深色标出：第1月首付、第9月验收款、第21月尾款
+            const mColors = monthlyCashflows.map((v, i) => i === 0 ? '#d63031' : (i === 8 || i === 20) ? '#e17055' : v < 0 ? '#fab1a0' : '#00b894');
+            chartMonthlyCF.data.datasets[0].backgroundColor = mColors;
+            chartMonthlyCF.data.datasets[0].borderColor = mColors;
+            chartMonthlyCF.update('none');
+        }
         if (chartBenefit) { chartBenefit.data.datasets[0].data = [configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, rdCapacity, cycleTime, complianceTotal]; chartBenefit.update('none'); }
     } catch(e) { console.error('Chart update error:', e); }
 }
@@ -928,7 +948,7 @@ function calc() {
     set('lbl_npv', 'F47 净现值 NPV@' + fm(p.discountRate * 100, 1) + '%'); set('lbl_npv_qs', 'F47 NPV@' + fm(p.discountRate * 100, 1) + '%');
     set('lbl_roi', 'F45 ' + years + '年总投资回报率'); set('lbl_ncf', 'F44 ' + years + '年累计净现金流');
     set('lbl_qs_roi', 'F45 ' + years + '年ROI'); set('lbl_qs_ncf', 'F44 ' + years + '年NCF');
-    set('lbl_chart_annual', '📊 ' + years + '年年度净现金流'); set('lbl_chart_cum', years + '年累计净现金流趋势');
+    set('lbl_chart_annual', '📊 ' + years + '年年度净现金流'); set('lbl_chart_cum', years + '年累计净现金流趋势'); set('lbl_chart_monthly', '📊 ' + years + '年月度净现金流');
     set('lbl_cf_table', '4.4 ' + years + '年现金流量表');
     set('lbl_tco_maint', '运维费用（' + years + '年）'); set('v_maint_years', years);
 
@@ -968,7 +988,7 @@ function calc() {
     animateQSValue('qs_totalLoss', totalLoss, '', 0); animateQSValue('qs_layer1Total', layer1Total, '', 0); animateQSValue('qs_layer2Total', layer2Total, '', 0);
     animateQSValue('qs_roi', roi, '', 0); animateQSValue('qs_ncf5', horizonNCF, '', 0); animateQSValue('qs_payback', paybackMonth !== null ? paybackMonth : totalMonths + 1, '', 1); animateQSValue('qs_npv', npv, '', 0);
 
-    updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, f30, f33, complianceTotal, yearly.map(y => y.net), yearly.map(y => y.cum), years);
+    updateCharts(layer1Total, layer2Total, annualBenefit, configBomBenefit, changeBenefit, qualityBenefit, designDupBenefit, f30, f33, complianceTotal, yearly.map(y => y.net), yearly.map(y => y.cum), years, cashflows);
 }
 
 function onParamChange() {
