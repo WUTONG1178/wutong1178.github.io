@@ -287,6 +287,10 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <option value="r12">爬坡 12 月、30% 起</option>
       </select>
     </div>
+    <div class="param-item">
+      <label>收益达成率 <span class="unit">%</span></label>
+      <input type="number" id="p_achieveRate" value="100" step="5" min="0" max="100" oninput="onParamChange()">
+    </div>
   </div>
   <div class="param-reset" id="paramReset">
     <button onclick="resetParams()">↺ 恢复默认值</button>
@@ -453,9 +457,9 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
     </div>
     <div class="card">
       <h3>2.2 质量管理收益 <span class="badge badge-green">收益</span></h3>
-      <div class="formula-row"><span class="f-id">F17</span><span class="f-label">内部返工减少收益</span><span class="f-formula">72万 × 改善率50%</span><span class="f-result benefit">36 万</span></div>
-      <div class="formula-row"><span class="f-id">F18</span><span class="f-label">客户召回减少收益</span><span class="f-formula">260万 × 改善率43%</span><span class="f-result benefit">112.7 万</span></div>
-      <div class="total-row"><span class="total-label">▶ 质量管理改善收益合计</span><span class="total-val benefit">148.7 万</span></div>
+      <div class="formula-row"><span class="f-id">F17</span><span class="f-label">内部返工减少收益</span><span class="f-formula">72万 × 改善率50%<span id="v_f17_calc"></span></span><span class="f-result benefit" id="v_f17">36 万</span></div>
+      <div class="formula-row"><span class="f-id">F18</span><span class="f-label">客户召回减少收益</span><span class="f-formula">260万 × 改善率43%<span id="v_f18_calc"></span></span><span class="f-result benefit" id="v_f18">112.7 万</span></div>
+      <div class="total-row"><span class="total-label">▶ 质量管理改善收益合计</span><span class="total-val benefit" id="v_qualityBenefit">148.7 万</span></div>
     </div>
     <div class="card">
       <h3>2.3 变更管理收益 <span class="badge badge-green">收益</span></h3>
@@ -469,7 +473,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <span class="f-formula"><span id="v_f20_base"></span> 万 × 改善率60% = <span id="v_f20_calc"></span></span>
         <span class="f-result benefit" id="v_f20">—</span>
       </div>
-      <div class="formula-row"><span class="f-id">F21</span><span class="f-label">严重延误减少收益</span><span class="f-formula">49.4万 × 改善率80%</span><span class="f-result benefit">39.5 万</span></div>
+      <div class="formula-row"><span class="f-id">F21</span><span class="f-label">严重延误减少收益</span><span class="f-formula">49.4万 × 改善率80%<span id="v_f21_calc"></span></span><span class="f-result benefit" id="v_f21">39.5 万</span></div>
       <div class="total-row"><span class="total-label">▶ 变更管理改善收益合计</span><span class="total-val benefit" id="v_changeBenefit">—</span></div>
     </div>
     <div class="card">
@@ -600,7 +604,7 @@ body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;backg
         <tr><th>类别</th><th>具体项目</th><th>现状损失(万/年)</th><th>改善率</th><th>损失减少收益(万/年)</th><th>增量收益(万/年)</th><th>收益合计(万/年)</th></tr>
         <tr><td rowspan="4">第一层<br>损失减少</td><td class="td-name">BOM管理</td><td class="td-loss" id="s_configBomLoss">—</td><td class="td-rate">69%</td><td class="td-benefit" id="s_configBomBenefit">—</td><td>—</td><td class="td-benefit" id="s_configBomTotal">—</td></tr>
         <tr><td class="td-name">工程变更</td><td class="td-loss" id="s_changeLoss">—</td><td class="td-rate">70%</td><td class="td-benefit" id="s_changeBenefit">—</td><td>—</td><td class="td-benefit" id="s_changeTotal">—</td></tr>
-        <tr><td class="td-name">质量损失</td><td class="td-loss">332</td><td class="td-rate">45%</td><td class="td-benefit">148.7</td><td>—</td><td class="td-benefit">148.7</td></tr>
+        <tr><td class="td-name">质量损失</td><td class="td-loss">332</td><td class="td-rate">45%</td><td class="td-benefit" id="s_qualityBenefit">148.7</td><td>—</td><td class="td-benefit" id="s_qualityTotal">148.7</td></tr>
         <tr><td class="td-name">设计重复</td><td class="td-loss" id="s_designDupLoss">—</td><td class="td-rate">60%</td><td class="td-benefit" id="s_designDupBenefit">—</td><td>—</td><td class="td-benefit" id="s_designDupTotal">—</td></tr>
         <tr style="background:#f0f4ff;"><td colspan="2" style="font-weight:600;">第一层小计</td><td class="td-loss" id="s_l1_loss">—</td><td>—</td><td class="td-benefit" id="s_l1_benefit">—</td><td>—</td><td style="font-weight:700;color:#00a8ff;" id="s_l1_total">—</td></tr>
         <tr><td rowspan="3">第二层<br>增量收益</td><td class="td-name">研发产能提升</td><td>—</td><td>—</td><td>—</td><td class="td-benefit" id="s_rdCapacity">—</td><td class="td-benefit">—</td></tr>
@@ -633,7 +637,7 @@ window._domReady = false;
 document.addEventListener('DOMContentLoaded', function() { window._domReady = true; });
 
 const defaults = {
-    laborRate: 77.6, bomItems: 72000, bomErrorRate: 10, annualChanges: 1200, teamSize: 110, newProjCount: 2.5, annualMaint: 40, discountRate: 8, calcYears: 5, rampMode: 'none'
+    laborRate: 77.6, bomItems: 72000, bomErrorRate: 10, annualChanges: 1200, teamSize: 110, newProjCount: 2.5, annualMaint: 40, discountRate: 8, calcYears: 5, rampMode: 'none', achieveRate: 100
 };
 
 const _prevQSValues = {};
@@ -787,7 +791,11 @@ function calc() {
         discountRate: parseFloat(document.getElementById('p_discountRate').value) / 100 || 0,
         calcYears: parseInt(document.getElementById('p_calcYears').value) || 5,
         rampMode: document.getElementById('p_rampMode').value || 'none',
+        achieveRate: parseFloat(document.getElementById('p_achieveRate').value) / 100,
     };
+    if (!isFinite(p.achieveRate)) p.achieveRate = 1; // 输入为空时按100%计
+    if (p.achieveRate < 0) p.achieveRate = 0;
+    if (p.achieveRate > 2) p.achieveRate = 2;
 
     const bomErrorItems = Math.round(p.bomItems * p.bomErrorRate);
     const f6_s1 = bomErrorItems * 0.60 * 80 / 10000;
@@ -816,12 +824,14 @@ function calc() {
     const designDupLoss = f12 + f13;
     const totalLoss = configBomLoss + qualityLoss + changeLoss + designDupLoss;
 
-    const f15 = bomErrorLoss * 0.70;
-    const f16 = configLoss * 0.66;
-    const f17 = f7 * 0.50; const f18 = f8 * 0.43;
+    // 收益达成率 ar：仅作用于含改善率的公式（F15~F18、F20~F23），F19 及第二层收益不受影响
+    const ar = p.achieveRate;
+    const f15 = bomErrorLoss * 0.70 * ar;
+    const f16 = configLoss * 0.66 * ar;
+    const f17 = f7 * 0.50 * ar; const f18 = f8 * 0.43 * ar;
     const f19 = p.annualChanges * 4.5 * p.laborRate / 10000;
-    const f20 = f10 * 0.60; const f21 = f11 * 0.80;
-    const f22 = f12 * 0.60; const f23 = f13 * 0.60;
+    const f20 = f10 * 0.60 * ar; const f21 = f11 * 0.80 * ar;
+    const f22 = f12 * 0.60 * ar; const f23 = f13 * 0.60 * ar;
     const configBomBenefit = f15 + f16;
     const qualityBenefit = f17 + f18;
     const changeBenefit = f19 + f20 + f21;
@@ -954,14 +964,19 @@ function calc() {
     set('v_totalLoss', fm(totalLoss, 0) + ' 万');
     animateQSValue('sec1_total', totalLoss, '', 0);
 
-    set('v_f15_base', fm(bomErrorLoss, 0)); set('v_f15_calc', fm(bomErrorLoss, 0) + ' × 70%'); set('v_f15', fm(f15, 0) + ' 万');
-    set('v_f16_base', fm(configLoss, 0)); set('v_f16_calc', fm(configLoss, 0) + ' × 66%'); set('v_f16', fm(f16, 0) + ' 万');
+    const achSuffix = ar < 1 ? ' × 达成率' + fm(ar * 100, 0) + '%' : '';
+    set('v_f15_base', fm(bomErrorLoss, 0)); set('v_f15_calc', fm(bomErrorLoss, 0) + ' × 70%' + achSuffix); set('v_f15', fm(f15, 0) + ' 万');
+    set('v_f16_base', fm(configLoss, 0)); set('v_f16_calc', fm(configLoss, 0) + ' × 66%' + achSuffix); set('v_f16', fm(f16, 0) + ' 万');
     set('v_configBomBenefit', fm(configBomBenefit, 0) + ' 万');
+    set('v_f17_calc', achSuffix); set('v_f17', fm(f17, 0) + ' 万');
+    set('v_f18_calc', achSuffix); set('v_f18', fm(f18, 0) + ' 万');
+    set('v_qualityBenefit', fm(qualityBenefit, 0) + ' 万');
     set('v_f19_calc', fm(p.annualChanges) + ' × 4.5 × ' + fm(p.laborRate) + ' ÷ 10000'); set('v_f19', fm(f19, 0) + ' 万');
-    set('v_f20_base', fm(f10, 0)); set('v_f20_calc', fm(f10, 0) + ' × 60%'); set('v_f20', fm(f20, 0) + ' 万');
+    set('v_f20_base', fm(f10, 0)); set('v_f20_calc', fm(f10, 0) + ' × 60%' + achSuffix); set('v_f20', fm(f20, 0) + ' 万');
+    set('v_f21_calc', achSuffix); set('v_f21', fm(f21, 0) + ' 万');
     set('v_changeBenefit', fm(changeBenefit, 0) + ' 万');
-    set('v_f22_base', fm(f12, 0)); set('v_f22_calc', fm(f12, 0) + ' × 60%'); set('v_f22', fm(f22, 0) + ' 万');
-    set('v_f23_base', fm(f13, 0)); set('v_f23_calc', fm(f13, 0) + ' × 60%'); set('v_f23', fm(f23, 0) + ' 万');
+    set('v_f22_base', fm(f12, 0)); set('v_f22_calc', fm(f12, 0) + ' × 60%' + achSuffix); set('v_f22', fm(f22, 0) + ' 万');
+    set('v_f23_base', fm(f13, 0)); set('v_f23_calc', fm(f13, 0) + ' × 60%' + achSuffix); set('v_f23', fm(f23, 0) + ' 万');
     set('v_designDupBenefit', fm(designDupBenefit, 0) + ' 万');
     set('v_layer1Total', fm(layer1Total, 0) + ' 万'); set('v_layer1Total2', fm(layer1Total, 0) + ' 万');
 
@@ -977,7 +992,8 @@ function calc() {
 
     set('v_f40_l1', fm(layer1Total, 0)); set('v_f40_l2', fm(layer2Total, 0)); set('v_f40_total', fm(layer1Total, 0) + ' + ' + fm(layer2Total, 0)); set('v_f40', fm(annualBenefit, 0) + ' 万');
     set('v_f41_annual', fm(annualBenefit, 0)); set('v_f41_monthly', fm(annualBenefit, 0) + ' ÷ 12'); set('v_f41', fm(monthlyBenefit, 0) + ' 万/月');
-    set('note_ramp', '注：' + rampDesc);
+    const achNote = ar < 1 ? ' 当前收益达成率 ' + fm(ar * 100, 0) + '%（仅作用于含改善率的公式 F15~F18、F20~F23，其余收益项不受影响）。' : '';
+    set('note_ramp', '注：' + rampDesc + achNote);
     set('v_roi', fm(roi, 1) + '%'); set('v_ncf5', fm(horizonNCF, 0)); set('v_payback', paybackMonth !== null ? fm(paybackMonth, 1) : '>' + totalMonths); set('v_npv', fm(npv, 0)); set('v_oppCost', fm(oppCost, 0));
     set('lbl_npv', 'F47 净现值 NPV@' + fm(p.discountRate * 100, 1) + '%'); set('lbl_npv_qs', 'F47 NPV@' + fm(p.discountRate * 100, 1) + '%');
     set('lbl_roi', 'F45 ' + years + '年总投资回报率'); set('lbl_ncf', 'F44 ' + years + '年累计净现金流');
@@ -1006,6 +1022,7 @@ function calc() {
     set('s_configBomLoss', fm(configBomLoss, 0)); set('s_configBomBenefit', fm(configBomBenefit, 0)); set('s_configBomTotal', fm(configBomBenefit, 0));
     set('s_changeLoss', fm(changeLoss, 0)); set('s_changeBenefit', fm(changeBenefit, 0)); set('s_changeTotal', fm(changeBenefit, 0));
     set('s_designDupLoss', fm(designDupLoss, 0)); set('s_designDupBenefit', fm(designDupBenefit, 0)); set('s_designDupTotal', fm(designDupBenefit, 0));
+    set('s_qualityBenefit', fm(qualityBenefit, 0)); set('s_qualityTotal', fm(qualityBenefit, 0));
     set('s_l1_loss', fm(totalLoss, 0)); set('s_l1_benefit', fm(layer1Total, 0)); set('s_l1_total', fm(layer1Total, 0));
     set('s_rdCapacity', fm(f30, 0)); set('s_cycleTime', fm(f33, 0)); set('s_compliance', fm(complianceTotal, 0));
     set('s_l2_benefit', fm(layer2Total, 0)); set('s_l2_total', fm(layer2Total, 0));
@@ -1045,6 +1062,7 @@ function resetParams() {
     document.getElementById('p_discountRate').value = defaults.discountRate;
     document.getElementById('p_calcYears').value = defaults.calcYears;
     document.getElementById('p_rampMode').value = defaults.rampMode;
+    document.getElementById('p_achieveRate').value = defaults.achieveRate;
     document.getElementById('chk_tcoMode').checked = false;
     tcoMode = false;
     applyTCOUI();
